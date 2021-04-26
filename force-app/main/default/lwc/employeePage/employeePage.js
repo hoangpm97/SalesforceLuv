@@ -17,6 +17,6 @@ export default class EmployeePage extends LightningElement {
     
     savedEmployee(event) {
         this.dataEdit.employee = JSON.parse(event.detail);
-        console.log('employee page: ' + this.dataEdit.employee.Name);
+        console.log('employee page 1: ' + this.dataEdit.employee.Name);
     }
 }

@@ -5,7 +5,7 @@
                 onselecteddetailemployee={showDetailEmployee}></c-employee-list-cmp>
         </div>
         <div class="slds-col slds-size_1-of-3 slds-p-left_large">
-            <c-employee-detail-cmp ></c-employee-detail-cmp>
+            <c-employee-detail-cmp></c-employee-detail-cmp>
         </div>
     </div>
     <c-employee-edit-cmp if:true={dataEdit.isShow} oncloseeditemployee={closeModalEditEmployee} onsavedemployee={savedEmployee}
