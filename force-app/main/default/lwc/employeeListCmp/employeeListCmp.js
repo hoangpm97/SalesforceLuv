@@ -10,6 +10,8 @@ export default class EmployeeListCmp extends LightningElement {
         phone: ''
     }
 
+    @track idEmployee;
+
     @wire(getEmployeeList)
     wiredEmployees({error, data}) {
         if (data) {
@@ -48,5 +50,14 @@ export default class EmployeeListCmp extends LightningElement {
 
     findEmployeeById(employeeId) {
         return this.employees.find(emp => emp.Id == employeeId);
+    }
+
+    handleSelectedDetail(event) {
+        this.idEmployee = event.target.dataset.id;     
+        event.preventDefault();
+        // khởi tạo dispatch id employee để hiển thi detail employee
+        const checkedEvent = new CustomEvent('getdetail', { detail: this.idEmployee});
+        this.dispatchEvent(checkedEvent);
+        
     }
 }

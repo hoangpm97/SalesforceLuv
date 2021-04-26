@@ -1,10 +1,18 @@
-import { LightningElement, track } from 'lwc';
+import { LightningElement, track , api} from 'lwc';
 
 export default class EmployeePage extends LightningElement {
     @track dataEdit = {
         isShow: false,
         employee: {}
     }
+
+    @track dataDetail = {
+        isHasRecord: false,
+        employee: {},
+        
+    };
+    
+    @track id;
 
     openModalEditEmployee(event) {
         this.dataEdit.employee = JSON.parse(event.detail);
@@ -18,5 +26,9 @@ export default class EmployeePage extends LightningElement {
     savedEmployee(event) {
         this.dataEdit.employee = JSON.parse(event.detail);
         console.log('employee page 1: ' + this.dataEdit.employee.Name);
+    }
+
+    handleShowDetailEmployee = (event) => {
+        this.id = event.detail;
     }
 }
