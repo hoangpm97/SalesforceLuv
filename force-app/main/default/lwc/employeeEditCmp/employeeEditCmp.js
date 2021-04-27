@@ -65,6 +65,7 @@ export default class EmployeeEditCmp extends LightningElement {
         if(isValidInput) {
             upSertEmployee({objEmployee: inputEmp, isAdd: this.isAdd})
             .then((result) => {
+                
                 this.dispatchEvent(new CustomEvent('savedemployee', {detail: JSON.stringify(this.employee)}));
             }).catch((error) => {
 

@@ -6,6 +6,7 @@ export default class EmployeePage extends LightningElement {
         employee: {}
     }
 
+
     @track dataDetail = {
         isHasRecord: false,
         employee: {},
