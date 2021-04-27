@@ -12,7 +12,7 @@
     cursor: default;
 }
 .number-item {
-    color: #f03708;
+    color: red;
 }
 .select-page-size {
     display: inline-block;
