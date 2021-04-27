@@ -27,6 +27,14 @@ public with sharing class EmployeeController {
         return Database.query(strSQL);
     }
 
+    @AuraEnabled(cacheable=true)
+    public static Employee__c getDetailEmployeeById(String employeeId){
+        return [
+            SELECT Id, Name, Email__c, Phone__c, BirthDay__c, Memo__c 
+            FROM Employee__c 
+            WHERE Id = :employeeId
+        ];
+    }
     @AuraEnabled
     public static string upSertEmployee(Employee__c objEmployee, Boolean isAdd){
         if (isAdd) {
@@ -35,5 +43,8 @@ public with sharing class EmployeeController {
             return '';
         }
     }
+
+    
+
 
 }

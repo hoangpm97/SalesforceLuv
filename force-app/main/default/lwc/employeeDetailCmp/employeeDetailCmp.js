@@ -2,20 +2,15 @@ import { LightningElement, api, track } from 'lwc';
 
 export default class EmployeeDetailCmp extends LightningElement {
     @api employee;
-    @api idemployee;
+    @api employeedetail;
+
     get isHasRecord() {
-        if(this.employee != undefined && this.employee.Id != undefined) {
-            return true;
-        }
-        else return false;
+        return true;
     }
 
     handleClick () {
-        console.log(this.idemployee);
-    }
-
-    @api
-    get getDetailEmployee()  {
-        console.log(this.idemployee);
+        //console.log(this.idemployee);
+        console.log('detail');
+        console.log(this.employee);
     }
 }

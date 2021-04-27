@@ -1,10 +1,13 @@
 import { LightningElement, track, wire } from 'lwc';
 import getEmployeeList from '@salesforce/apex/EmployeeController.getEmployeeList';
 import searchEmployees from '@salesforce/apex/EmployeeController.searchEmployees';
+import getDetailEmployeeById from '@salesforce/apex/EmployeeController.getDetailEmployeeById';
+
 import { ShowToastEvent } from 'lightning/platformShowToastEvent';
 export default class EmployeeListCmp extends LightningElement {
     employees;
     error;
+    employeeDetail;
     @track isSearching = false;
 
     @track searchInput = {
@@ -75,12 +78,34 @@ export default class EmployeeListCmp extends LightningElement {
         return this.employees.find(emp => emp.Id == employeeId);
     }
 
+    
+
     handleSelectedDetail(event) {
-        this.idEmployee = event.target.dataset.id;     
-        event.preventDefault();
-        // khởi tạo dispatch id employee để hiển thi detail employee
-        const checkedEvent = new CustomEvent('getdetail', { detail: this.idEmployee});
-        this.dispatchEvent(checkedEvent);
+        this.idEmployee = event.target.dataset.id;
         
+        console.log(this.idEmployee)
+        this.handleDispatchDetailEmployees(event);
+       
+        
+    }
+
+    // Lấy và Gửi employee đã tìm kiếm qua EmployeeId
+    handleDispatchDetailEmployees(event) {
+        getDetailEmployeeById({employeeId: this.idEmployee})
+            .then((result) => {
+                
+                this.employeeDetail = result;
+                this.error = undefined;
+                console.log(this.employeeDetail);
+                event.preventDefault();
+                // khởi tạo dispatch id employee để hiển thi detail employee
+                const checkedEvent = new CustomEvent('getdetail', { detail: this.employeeDetail});
+                this.dispatchEvent(checkedEvent);
+                
+            })
+            .catch((error) => {
+                this.employeeDetail = undefined;
+                this.error = error;
+            });
     }
 }
