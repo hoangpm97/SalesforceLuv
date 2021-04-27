@@ -2,7 +2,7 @@ public with sharing class EmployeeController {
 
     @AuraEnabled(cacheable=true)
     public static List<Employee__c> searchEmployees(String nameSearch, String phoneSearch){
-        String strSQL = 'SELECT Name, Phone__c, BirthDay__c, Email__c ';
+        String strSQL = 'SELECT Id, Name, Phone__c, BirthDay__c, Email__c ';
         strSQL += ' FROM Employee__c ';
         strSQL += ' WHERE Id != null ';
         
@@ -23,7 +23,7 @@ public with sharing class EmployeeController {
 
     @AuraEnabled(cacheable=true)
     public static List<Employee__c> getEmployeeList(){
-        String strSQL = 'SELECT Name, Phone__c, BirthDay__c, Email__c FROM Employee__c ORDER BY Name ASC';
+        String strSQL = 'SELECT Id, Name, Phone__c, BirthDay__c, Email__c FROM Employee__c ORDER BY Name ASC';
         return Database.query(strSQL);
     }
 
@@ -34,6 +34,14 @@ public with sharing class EmployeeController {
             FROM Employee__c 
             WHERE Id = :employeeId
         ];
+    }
+    @AuraEnabled
+    public static string upSertEmployee(Employee__c objEmployee, Boolean isAdd){
+        if (isAdd) {
+            return '';
+        } else {
+            return '';
+        }
     }
 
     

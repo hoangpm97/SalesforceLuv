@@ -3,10 +3,12 @@ import getEmployeeList from '@salesforce/apex/EmployeeController.getEmployeeList
 import searchEmployees from '@salesforce/apex/EmployeeController.searchEmployees';
 import getDetailEmployeeById from '@salesforce/apex/EmployeeController.getDetailEmployeeById';
 
+import { ShowToastEvent } from 'lightning/platformShowToastEvent';
 export default class EmployeeListCmp extends LightningElement {
     employees;
     error;
     employeeDetail;
+    @track isSearching = false;
 
     @track searchInput = {
         name: '',
@@ -31,14 +33,35 @@ export default class EmployeeListCmp extends LightningElement {
     }
 
     handleSearchEmployees() {
+        // Hiển thị loading
+        this.isSearching = true;
         searchEmployees({nameSearch: this.searchInput.name, phoneSearch: this.searchInput.phone})
             .then((result) => {
+                // Lấy kết quả search
                 this.employees = result;
                 this.error = undefined;
+                // ẩn loading
+                this.isSearching = false;
+                // Toast message success
+                const event = new ShowToastEvent({
+                    title: 'Message',
+                    message: 'Search data was successfully.',
+                    variant: 'success'
+                });
+                this.dispatchEvent(event);
+                
             })
             .catch((error) => {
                 this.employees = undefined;
                 this.error = error;
+
+                // Toast message error
+                const event = new ShowToastEvent({
+                    title: 'Message',
+                    message: 'An error has occured.',
+                    variant: 'error'
+                });
+                this.dispatchEvent(event);
             });
     }
 
