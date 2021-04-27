@@ -1,11 +1,17 @@
 import { LightningElement, api, track } from 'lwc';
 
+import upSertEmployee from '@salesforce/apex/EmployeeController.upSertEmployee';
+
 export default class EmployeeEditCmp extends LightningElement {
     @api employee;
     @track validator = {};
+    @track isAdd = false;
+    @track isSaving = false;
 
     connectedCallback() {
-        console.log('abc');
+        if (this.employee === undefined) {
+            this.isAdd = true;
+        }
         this.validator = this.initValidatorData();
     }
 
@@ -47,16 +53,26 @@ export default class EmployeeEditCmp extends LightningElement {
         if (employee.BirthDay__c === null) {
             validObject.birthday = REQ_FIELD_VALID;
         }
-
         this.validator = validObject;
-
+        return !validObject.name.isError && !validObject.email.isError && !validObject.birthday.isError;
     }
 
     saveEmployee() {
-        console.log('employee: ' + this.employee.BirthDay__c);
+        // Validate input Employee
         let inputEmp = Object.assign({}, this.employee);
-        this.validateInput(inputEmp);
-        
-        this.dispatchEvent(new CustomEvent('savedemployee', {detail: JSON.stringify(this.employee)}));
+        let isValidInput = this.validateInput(inputEmp);
+
+        if(isValidInput) {
+            upSertEmployee({objEmployee: inputEmp, isAdd: this.isAdd})
+            .then((result) => {
+                this.dispatchEvent(new CustomEvent('savedemployee', {detail: JSON.stringify(this.employee)}));
+            }).catch((error) => {
+
+            });
+            
+        } else {
+            console.log('error');
+        }
+
     }
 }

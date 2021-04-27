@@ -16,16 +16,16 @@
                                     title="required">*</abbr></label>
                             <input type="text" id="txt-name" data-field-name="Name" class="slds-input"
                                 value={employee.Name} onchange={changeFieldInputHandler} />
-                            <!-- <div class="slds-form-element__help" if:true={validator.name.isError}>
-                                {validator.name.errMsg}</div> -->
+                            <div class="slds-form-element__help" if:true={validator.name.isError}>
+                                {validator.name.errMsg}</div>
                         </div>
                         <div class={classInputEmailWrapper}>
                             <label class="slds-form-element__label">Email<abbr class="slds-required"
                                     title="required">*</abbr></label>
                             <input type="text" id="txt-email" data-field-name="Email__c" class="slds-input"
                                 value={employee.Email__c} onchange={changeFieldInputHandler} />
-                            <!-- <div class="slds-form-element__help" if:true={validator.email.isError}>
-                                {validator.email.errMsg}</div> -->
+                            <div class="slds-form-element__help" if:true={validator.email.isError}>
+                                {validator.email.errMsg}</div>
                         </div>
                     </div>
                     <div class="slds-form-element__row">
@@ -41,8 +41,8 @@
                                 variant="label-hidden" value={employee.BirthDay__c} onchange={changeFieldInputHandler}>
 
                             </lightning-input>
-                            <!-- <div class="slds-form-element__help" if:true={validator.birthday.isError}>
-                                {validator.birthday.errMsg}</div> -->
+                            <div class="slds-form-element__help" if:true={validator.birthday.isError}>
+                                {validator.birthday.errMsg}</div>
                         </div>
                     </div>
                     <div class="slds-form-element__row">
@@ -58,10 +58,9 @@
             </div>
             <footer class="slds-modal__footer">
                 <button class="slds-button slds-button_neutral" onclick={closeModalHandler}>Cancel</button>
-                <button class="slds-button slds-button_brand" onclick={saveEmployee}>Save</button>
     
-                <!-- <button if:false={isSaving} class="slds-button slds-button_brand" onclick={saveEmployee}>Save</button>
-                <button if:true={isSaving} class="slds-button slds-button_brand unactive-btn">Save</button> -->
+                <button if:false={isSaving} class="slds-button slds-button_brand" onclick={saveEmployee}>Save</button>
+                <button if:true={isSaving} class="slds-button slds-button_brand unactive-btn">Save</button>
             </footer>
         </div>
     </section>
