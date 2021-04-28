@@ -3,6 +3,10 @@
     margin-left: 27px;
 }
 
+.hidden-loading {
+    display: none;
+}
+
 .icon-refreshing {
     position: relative;
     margin-right: 15px;

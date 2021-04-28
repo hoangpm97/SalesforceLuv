@@ -5,10 +5,14 @@ import getDetailEmployeeById from '@salesforce/apex/EmployeeController.getDetail
 
 import { ShowToastEvent } from 'lightning/platformShowToastEvent';
 export default class EmployeeListCmp extends LightningElement {
-    employees;
+    employees = [];
+    displayingEmployees;
     error;
     employeeDetail;
     @track isSearching = false;
+    @track itemPerPage = 2;
+    @track currentPage = 1;
+    @track isShowNotHasRecord = false;
 
     @track searchInput = {
         name: '',
@@ -18,9 +22,11 @@ export default class EmployeeListCmp extends LightningElement {
     @track idEmployee;
 
     @wire(getEmployeeList)
-    wiredEmployees({error, data}) {
+    wiredEmployees({ error, data }) {
         if (data) {
             this.employees = data;
+            // Hiển thị list ban đầu
+            this.displayEmployees();
             this.error = undefined;
         } else if (error) {
             this.error = error;
@@ -35,34 +41,41 @@ export default class EmployeeListCmp extends LightningElement {
     handleSearchEmployees() {
         // Hiển thị loading
         this.isSearching = true;
-        searchEmployees({nameSearch: this.searchInput.name, phoneSearch: this.searchInput.phone})
-            .then((result) => {
-                // Lấy kết quả search
-                this.employees = result;
-                this.error = undefined;
-                // ẩn loading
-                this.isSearching = false;
-                // Toast message success
-                const event = new ShowToastEvent({
-                    title: 'Message',
-                    message: 'Search data was successfully.',
-                    variant: 'success'
-                });
-                this.dispatchEvent(event);
-                
-            })
-            .catch((error) => {
-                this.employees = undefined;
-                this.error = error;
+        console.log('search1: ' + this.isSearching);
+        setTimeout(() => {
+            searchEmployees({ nameSearch: this.searchInput.name, phoneSearch: this.searchInput.phone })
+                .then((result) => {
+                    // Lấy kết quả search
+                    this.employees = result;
+                    this.error = undefined;
+                    // ẩn loading
+                    this.isSearching = false;
+                    console.log('search: ' + this.isSearching);
 
-                // Toast message error
-                const event = new ShowToastEvent({
-                    title: 'Message',
-                    message: 'An error has occured.',
-                    variant: 'error'
+                    // Toast message success
+                    const event = new ShowToastEvent({
+                        title: 'Message',
+                        message: 'Search data was successfully.',
+                        variant: 'success'
+                    });
+                    this.dispatchEvent(event);
+                    // Hiển thị lại list
+                    this.currentPage = 1;
+                    this.displayEmployees();
+                })
+                .catch((error) => {
+                    this.employees = undefined;
+                    this.error = error;
+
+                    // Toast message error
+                    const event = new ShowToastEvent({
+                        title: 'Message',
+                        message: 'An error has occured.',
+                        variant: 'error'
+                    });
+                    this.dispatchEvent(event);
                 });
-                this.dispatchEvent(event);
-            });
+        }, 300);
     }
 
     handleOpenModalUpsertEmployee(event) {
@@ -70,7 +83,8 @@ export default class EmployeeListCmp extends LightningElement {
         let employee = {};
 
         employee = this.findEmployeeById(employeeId);
-        this.dispatchEvent(new CustomEvent('openmodalupsertemployee', {detail: JSON.stringify(employee)}) )
+
+        this.dispatchEvent(new CustomEvent('openmodalupsertemployee', { detail: JSON.stringify(employee) }))
 
     }
 
@@ -78,34 +92,76 @@ export default class EmployeeListCmp extends LightningElement {
         return this.employees.find(emp => emp.Id == employeeId);
     }
 
-    
+
 
     handleSelectedDetail(event) {
         this.idEmployee = event.target.dataset.id;
-        
+
         console.log(this.idEmployee)
         this.handleDispatchDetailEmployees(event);
-       
-        
+
+
     }
 
     // Lấy và Gửi employee đã tìm kiếm qua EmployeeId
     handleDispatchDetailEmployees(event) {
-        getDetailEmployeeById({employeeId: this.idEmployee})
+        getDetailEmployeeById({ employeeId: this.idEmployee })
             .then((result) => {
-                
+
                 this.employeeDetail = result;
                 this.error = undefined;
                 console.log(this.employeeDetail);
                 event.preventDefault();
                 // khởi tạo dispatch id employee để hiển thi detail employee
-                const checkedEvent = new CustomEvent('getdetail', { detail: this.employeeDetail});
+                const checkedEvent = new CustomEvent('getdetail', { detail: this.employeeDetail });
                 this.dispatchEvent(checkedEvent);
-                
+
             })
             .catch((error) => {
                 this.employeeDetail = undefined;
                 this.error = error;
             });
     }
+
+    // Get tổng số bản ghi
+    get getTotalRecord() {
+        return this.employees.length;
+    }
+
+    // Xử lý sự kiện paging
+    handlePagingEvent(event) {
+        this.currentPage = event.detail.currentPage;
+        this.itemPerPage = event.detail.itemPerPage;
+        this.displayEmployees();
+    }
+
+    // Hiển thị list employee theo paging
+    displayEmployees() {
+        let displayItems = [];
+        let from = (this.currentPage - 1) * this.itemPerPage;
+        let to = this.currentPage * this.itemPerPage;
+        let totalRecord = this.employees.length;
+        if (to > totalRecord) {
+            to = totalRecord;
+        }
+        for (let i = from; i < to; i++) {
+            displayItems.push(this.employees[i]);
+        }
+        this.displayingEmployees = displayItems;
+
+
+    }
+
+    get getVisibilityIconSearching() {
+        console.log('getVisibilityIconSearching' + this.isSearching);
+        return (this.isSearching) ? 'icon-searching' : 'icon-searching hidden-loading';
+    }
+
+    get getIsShowNotHasRecord() {
+        if (this.length == 0) {
+            return true;
+        }
+        return false;
+    }
+
 }
