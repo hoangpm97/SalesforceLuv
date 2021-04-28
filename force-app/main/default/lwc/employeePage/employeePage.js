@@ -18,6 +18,7 @@ export default class EmployeePage extends LightningElement {
     openModalEditEmployee(event) {
         this.dataEdit.employee = JSON.parse(event.detail);
         this.dataEdit.isShow = true;
+        console.log('2');
     }
 
     closeModalEditEmployee(event) {
@@ -30,9 +31,8 @@ export default class EmployeePage extends LightningElement {
     }
 
     handleShowDetailEmployee = (event) => {
-        console.log('page');
-        this.dataEdit.employee = event.detail;
-        console.log(JSON.stringify(this.dataEdit.employee.Name));
+        this.dataDetail.employee = event.detail;
+        this.dataDetail.isHasRecord = true;
     }
 
 

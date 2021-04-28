@@ -68,8 +68,9 @@ export default class EmployeeListCmp extends LightningElement {
     handleOpenModalUpsertEmployee(event) {
         let employeeId = event.target.dataset.id;
         let employee = {};
-
-        employee = this.findEmployeeById(employeeId);
+        if (employeeId != undefined) {
+            employee = this.findEmployeeById(employeeId);
+        }
         this.dispatchEvent(new CustomEvent('openmodalupsertemployee', {detail: JSON.stringify(employee)}) )
 
     }
