@@ -25,6 +25,8 @@ export default class EmployeeListCmp extends LightningElement {
     wiredEmployees({error, data}) {
         if (data) {
             this.employees = data;
+            // Hiển thị list ban đầu
+            this.displayEmployees();
             this.error = undefined;
         } else if (error) {
             this.error = error;
