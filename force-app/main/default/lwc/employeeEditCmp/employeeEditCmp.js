@@ -90,13 +90,14 @@ export default class EmployeeEditCmp extends LightningElement {
         insertEmployee({model: inputEmployee})
         .then((result) => {
             let msg = JSON.parse(result);
-            console.log(message);
+            console.log(msg);
             const event = new ShowToastEvent({
-                title: msg.title,
-                message: msg.message,
+                "title": msg.title,
+                "message": msg.message,
                 variant: msg.variant
             });
             this.dispatchEvent(event);
+            this.closeModalHandler();
             
         }).catch((error) => {
             console.log('error', error);

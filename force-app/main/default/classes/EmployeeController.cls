@@ -51,7 +51,7 @@ public with sharing class EmployeeController {
         //khoi tao va khai báo doi tuong employee
         Employee__c employeeObj = new Employee__c();
 
-        if(model.Id != null){
+        if(model.Id != ''){
             // kiem tra ton tai cua employee
             List<Employee__C> getEmployeeById = [SELECT Id FROM Employee__C WHERE Id = :model.Id];
             if(getEmployeeById.size() == 0) {
