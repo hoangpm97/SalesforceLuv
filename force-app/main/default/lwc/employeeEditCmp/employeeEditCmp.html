@@ -11,7 +11,7 @@
             <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">
                 <div class="slds-form slds-form_compound">
                     <div class="slds-form-element__row">
-                        <div class="slds-form-element slds-size_1-of-2　slds-has-error">
+                        <div class={classInputNameWrapper}>
                             <label class="slds-form-element__label">Name<abbr class="slds-required"
                                     title="required">*</abbr></label>
                             <input type="text" id="txt-name" data-field-name="Name" class="slds-input"
@@ -19,7 +19,7 @@
                             <div class="slds-form-element__help" if:true={validator.name.isError}>
                                 {validator.name.errMsg}</div>
                         </div>
-                        <div class="slds-form-element slds-size_1-of-2">
+                        <div class={classInputEmailWrapper}>
                             <label class="slds-form-element__label">Email<abbr class="slds-required"
                                     title="required">*</abbr></label>
                             <input type="text" id="txt-email" data-field-name="Email__c" class="slds-input"
@@ -29,12 +29,12 @@
                         </div>
                     </div>
                     <div class="slds-form-element__row">
-                        <div class="slds-form-element slds-size_1-of-2">
+                        <div class="slds-form-element slds-size_1-of-2 ">
                             <label class="slds-form-element__label">Phone</label>
                             <input type="text" id="txt-phone" data-field-name="Phone__c" class="slds-input"
                                 value={employee.Phone__c} onchange={changeFieldInputHandler} />
                         </div>
-                        <div class="slds-form-element slds-size_1-of-2">
+                        <div class={classInputBirthDayWrapper}>
                             <label class="slds-form-element__label">BirthDay<abbr class="slds-required"
                                     title="required">*</abbr></label>
                             <lightning-input type="date" name="input1" data-field-name="BirthDay__c"

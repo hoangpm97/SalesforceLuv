@@ -23,7 +23,7 @@ public with sharing class EmployeeController {
 
     @AuraEnabled(cacheable=true)
     public static List<Employee__c> getEmployeeList(){
-        String strSQL = 'SELECT Id, Name, Phone__c, BirthDay__c, Email__c FROM Employee__c ORDER BY Name ASC';
+        String strSQL = 'SELECT Id, Name, Phone__c, BirthDay__c, Email__c, Memo__c FROM Employee__c ORDER BY Name ASC';
         return Database.query(strSQL);
     }
 

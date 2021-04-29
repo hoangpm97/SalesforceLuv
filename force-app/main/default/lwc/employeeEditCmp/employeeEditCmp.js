@@ -50,8 +50,6 @@ export default class EmployeeEditCmp extends LightningElement {
         }
     }
 
-    
-
     validateInput(employee) {
         let validObject = this.initValidatorData();
 
@@ -68,7 +66,7 @@ export default class EmployeeEditCmp extends LightningElement {
             validObject.email = REQ_FIELD_VALID;
         }
 
-        if (employee.BirthDay__c === null) {
+        if (employee.BirthDay__c.trim() === '' || employee.BirthDay__c === null) {
             validObject.birthday = REQ_FIELD_VALID;
         }
         this.validator = validObject;
@@ -76,7 +74,7 @@ export default class EmployeeEditCmp extends LightningElement {
     }
 
     saveEmployee() {
-        // Validate input Employee
+        // set value employee import vao model
         let inputEmployee = {
             Id: this.employee.Id,
             Name: this.employee.Name,
@@ -85,24 +83,53 @@ export default class EmployeeEditCmp extends LightningElement {
             BirthDay: this.employee.BirthDay__c,
             Memo: this.employee.Memo__c,
         };
-        console.log(this.Id);
-        console.log("this.employee", inputEmployee)
-        insertEmployee({model: inputEmployee})
-        .then((result) => {
-            let msg = JSON.parse(result);
-            console.log(msg);
-            const event = new ShowToastEvent({
-                "title": msg.title,
-                "message": msg.message,
-                variant: msg.variant
-            });
-            this.dispatchEvent(event);
-            this.closeModalHandler();
-            
-        }).catch((error) => {
-            console.log('error', error);
-        });
-        
+        // get message error chua nhap input (email, name or birthday)
+        let inputEmp = Object.assign({}, this.employee);
+        let isValid = this.validateInput(inputEmp);
 
+        // validate input
+        if(isValid) {
+            insertEmployee({model: inputEmployee})
+            .then((result) => {
+                let msg = JSON.parse(result);
+                console.log(msg);
+                const event = new ShowToastEvent({
+                    "title": msg.title,
+                    "message": msg.message,
+                    variant: msg.variant
+                });
+
+                // hien thi thay doi cua employee len component Detail khi edit thanh cong
+                if(msg.variant == 'success') {
+                    console.log(this.employee.Id);
+                    this.dispatchEvent(new CustomEvent('savedemployee', { detail: JSON.stringify(msg) }));
+                }
+                this.dispatchEvent(event);
+                this.closeModalHandler();
+                
+            }).catch((error) => {
+                const event = new ShowToastEvent({
+                    "title": 'Error!',
+                    "message": 'System error. Please reload page.',
+                    variant: 'error'
+                });
+                this.dispatchEvent(event);
+            });
+        }
+    }
+
+    // Hien thi border và text mau do khi khong nhap fields bat buoc
+    get classInputNameWrapper() {
+        return this.getInputWrapperClassCss(this.validator.name.isError);
+    }
+    get classInputEmailWrapper() {
+        return this.getInputWrapperClassCss(this.validator.email.isError);
+    }
+    get classInputBirthDayWrapper() {
+        return this.getInputWrapperClassCss(this.validator.birthday.isError);
+    }
+
+    getInputWrapperClassCss(isError) {
+        return isError ? 'slds-form-element slds-size_1-of-2 slds-has-error': 'slds-form-element slds-size_1-of-2';
     }
 }
