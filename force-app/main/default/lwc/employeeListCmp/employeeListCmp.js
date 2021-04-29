@@ -5,10 +5,14 @@ import getDetailEmployeeById from '@salesforce/apex/EmployeeController.getDetail
 
 import { ShowToastEvent } from 'lightning/platformShowToastEvent';
 export default class EmployeeListCmp extends LightningElement {
-    employees;
+    employees = [];
+    displayingEmployees;
     error;
     employeeDetail;
     @track isSearching = false;
+    @track itemPerPage = 2;
+    @track currentPage = 1;
+    @track isShowNotHasRecord = false;
 
     @track searchInput = {
         name: '',
@@ -64,7 +68,7 @@ export default class EmployeeListCmp extends LightningElement {
                     });
                     this.dispatchEvent(event);
                 });
-                this.dispatchEvent(event);
+               
             });
     }
 
