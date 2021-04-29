@@ -1,6 +1,6 @@
 public with sharing class EmployeeController {
 
-    @AuraEnabled(cacheable=true)
+    @AuraEnabled
     public static List<Employee__c> searchEmployees(String nameSearch, String phoneSearch){
         String strSQL = 'SELECT Id, Name, Phone__c, BirthDay__c, Email__c ';
         strSQL += ' FROM Employee__c ';

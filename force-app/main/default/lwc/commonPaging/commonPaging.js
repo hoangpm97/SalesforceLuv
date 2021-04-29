@@ -7,25 +7,19 @@ export default class CommonPaging extends LightningElement {
     @track totalPage;
 
     connectedCallback() {
-        console.log('connectedCallback');
         this.totalPage = this.caculateTotalPage();
-        console.log('total: ' + this.totalPage);
-        console.log('current: ' + this.currentPage);
-        console.log('itemPerPage: ' + this.itemPerPage);
     }
     renderedCallback() {
-        console.log('renderedCallback');
         this.totalPage = this.caculateTotalPage();
-        console.log('total: ' + this.totalPage);
-        console.log('current: ' + this.currentPage);
-        console.log('itemPerPage: ' + this.itemPerPage);
+        if (this.currentPage > this.totalPage) {
+            this.currentPage = 1;
+            this.dispatchEvent(new CustomEvent('paging', {detail: {currentPage: this.currentPage, itemPerPage: this.itemPerPage}}));
+        }
     }
 
     previousHandler() {
         if (this.currentPage > 1) {
             this.currentPage --;
-            // console.log('currentP: ' + this.currentPage);
-            // console.log('itemPerPageP: ' + this.itemPerPage);
             this.dispatchEvent(new CustomEvent('paging', {detail: {currentPage: this.currentPage, itemPerPage: this.itemPerPage}}));
         }
     }
@@ -33,8 +27,6 @@ export default class CommonPaging extends LightningElement {
     nextHandler() {
         if (this.currentPage < this.totalPage) {
             this.currentPage ++;
-            // console.log('currentN: ' + this.currentPage);
-            // console.log('itemPerPageN: ' + this.itemPerPage);
             this.dispatchEvent(new CustomEvent('paging', {detail: {currentPage: this.currentPage, itemPerPage: this.itemPerPage}}));
         }
     }
