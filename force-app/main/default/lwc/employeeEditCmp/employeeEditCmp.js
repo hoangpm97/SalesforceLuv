@@ -1,18 +1,34 @@
 import { LightningElement, api, track } from 'lwc';
 
 import upSertEmployee from '@salesforce/apex/EmployeeController.upSertEmployee';
+import insertEmployee from '@salesforce/apex/EmployeeController.insertEmployee';
 
+import { ShowToastEvent } from 'lightning/platformShowToastEvent';
 export default class EmployeeEditCmp extends LightningElement {
     @api employee;
     @track validator = {};
     @track isAdd = false;
     @track isSaving = false;
 
+
+    // Get value hiển thị lên input
     connectedCallback() {
-        if (this.employee === undefined) {
+        if (JSON.stringify(this.employee) == {} || JSON.stringify(this.employee.Id) == undefined ) {
+            this.employee = this.setDefaultValueAdd();
             this.isAdd = true;
         }
         this.validator = this.initValidatorData();
+    }
+
+    setDefaultValueAdd() {
+        return {
+            Id: '',
+            Name: '',
+            Email__c: '',
+            Phone__c: '',
+            BirthDay__c: '',
+            Memo__c: '',
+        };
     }
 
     closeModalHandler() {
@@ -33,6 +49,8 @@ export default class EmployeeEditCmp extends LightningElement {
             birthday: {isError: false, errMsg: ""}
         }
     }
+
+    
 
     validateInput(employee) {
         let validObject = this.initValidatorData();
@@ -59,21 +77,31 @@ export default class EmployeeEditCmp extends LightningElement {
 
     saveEmployee() {
         // Validate input Employee
-        let inputEmp = Object.assign({}, this.employee);
-        let isValidInput = this.validateInput(inputEmp);
-
-        if(isValidInput) {
-            upSertEmployee({objEmployee: inputEmp, isAdd: this.isAdd})
-            .then((result) => {
-                
-                this.dispatchEvent(new CustomEvent('savedemployee', {detail: JSON.stringify(this.employee)}));
-            }).catch((error) => {
-
+        let inputEmployee = {
+            Id: this.employee.Id,
+            Name: this.employee.Name,
+            Email: this.employee.Email__c,
+            Phone: this.employee.Phone__c,
+            BirthDay: this.employee.BirthDay__c,
+            Memo: this.employee.Memo__c,
+        };
+        console.log(this.Id);
+        console.log("this.employee", inputEmployee)
+        insertEmployee({model: inputEmployee})
+        .then((result) => {
+            let msg = JSON.parse(result);
+            console.log(message);
+            const event = new ShowToastEvent({
+                title: msg.title,
+                message: msg.message,
+                variant: msg.variant
             });
+            this.dispatchEvent(event);
             
-        } else {
-            console.log('error');
-        }
+        }).catch((error) => {
+            console.log('error', error);
+        });
+        
 
     }
 }

@@ -5,14 +5,10 @@ import getDetailEmployeeById from '@salesforce/apex/EmployeeController.getDetail
 
 import { ShowToastEvent } from 'lightning/platformShowToastEvent';
 export default class EmployeeListCmp extends LightningElement {
-    employees = [];
-    displayingEmployees;
+    employees;
     error;
     employeeDetail;
     @track isSearching = false;
-    @track itemPerPage = 2;
-    @track currentPage = 1;
-    @track isShowNotHasRecord = false;
 
     @track searchInput = {
         name: '',
@@ -22,11 +18,9 @@ export default class EmployeeListCmp extends LightningElement {
     @track idEmployee;
 
     @wire(getEmployeeList)
-    wiredEmployees({ error, data }) {
+    wiredEmployees({error, data}) {
         if (data) {
             this.employees = data;
-            // Hiển thị list ban đầu
-            this.displayEmployees();
             this.error = undefined;
         } else if (error) {
             this.error = error;
@@ -70,7 +64,8 @@ export default class EmployeeListCmp extends LightningElement {
                     });
                     this.dispatchEvent(event);
                 });
-        }, 300);
+                this.dispatchEvent(event);
+            });
     }
 
     raiseToaseEvent(strMessage, strVariant) {
@@ -86,10 +81,10 @@ export default class EmployeeListCmp extends LightningElement {
     handleOpenModalUpsertEmployee(event) {
         let employeeId = event.target.dataset.id;
         let employee = {};
-
-        employee = this.findEmployeeById(employeeId);
-
-        this.dispatchEvent(new CustomEvent('openmodalupsertemployee', { detail: JSON.stringify(employee) }))
+        if (employeeId != undefined) {
+            employee = this.findEmployeeById(employeeId);
+        }
+        this.dispatchEvent(new CustomEvent('openmodalupsertemployee', {detail: JSON.stringify(employee)}) )
 
     }
 
@@ -97,30 +92,30 @@ export default class EmployeeListCmp extends LightningElement {
         return this.employees.find(emp => emp.Id == employeeId);
     }
 
-
+    
 
     handleSelectedDetail(event) {
         this.idEmployee = event.target.dataset.id;
-
+        
         console.log(this.idEmployee)
         this.handleDispatchDetailEmployees(event);
-
-
+       
+        
     }
 
     // Lấy và Gửi employee đã tìm kiếm qua EmployeeId
     handleDispatchDetailEmployees(event) {
-        getDetailEmployeeById({ employeeId: this.idEmployee })
+        getDetailEmployeeById({employeeId: this.idEmployee})
             .then((result) => {
-
+                
                 this.employeeDetail = result;
                 this.error = undefined;
                 console.log(this.employeeDetail);
                 event.preventDefault();
                 // khởi tạo dispatch id employee để hiển thi detail employee
-                const checkedEvent = new CustomEvent('getdetail', { detail: this.employeeDetail });
+                const checkedEvent = new CustomEvent('getdetail', { detail: this.employeeDetail});
                 this.dispatchEvent(checkedEvent);
-
+                
             })
             .catch((error) => {
                 this.employeeDetail = undefined;
