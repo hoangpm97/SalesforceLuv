@@ -31,7 +31,7 @@
                     <div
                         class="slds-form-element slds-form-element_horizontal slds-is-editing slds-form-element_1-col slds-m-bottom_none slds-m-top_medium">
                         <button class="slds-button slds-button_brand" onclick={handleSearchEmployees}>Search</button>
-                        <span if:true={isSearching} class="icon-searching">
+                        <span class={getVisibilityIconSearching}>
                             <div class="slds-spinner_container">
                                 <div role="status" class="slds-spinner slds-spinner_small slds-spinner_brand">
                                     <span class="slds-assistive-text">Loading</span>
@@ -42,7 +42,7 @@
                         </span>
                         <button class="slds-button slds-button_brand slds-float_right"
                             onclick={handleOpenModalUpsertEmployee}>Add Employee</button>
-                        <button class="slds-button slds-button_brand slds-float_right" onclick={handleRefreshPage}>Refresh Page</button>
+                        <button class="slds-button slds-button_brand slds-float_right slds-m-right_medium" onclick={handleRefreshPage}>Refresh Page</button>
                         <span if:true={isRefreshing} class="icon-refreshing">
                             <div class="slds-spinner_container">
                                 <div role="status" class="slds-spinner slds-spinner_small slds-spinner_brand">
@@ -56,7 +56,7 @@
                 </div>
             </div>
         </div>
-    <div class="slds-box slds-p-around_none"> 
+    <div if:false={getIsShowNotHasRecord} class="slds-box slds-p-around_none"> 
         <div style="max-height: 500px; overflow-y: auto;" class="slds-border_bottom">
             <table class="slds-table slds-table_cell-buffer slds-table_bordered">
                 <thead>
@@ -85,7 +85,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <template for:each={employees} for:item="employee">
+                    <template for:each={displayingEmployees} for:item="employee">
                         <tr class="slds-hint-parent" key={employee.Id}>
                             <th data-label="No">
                                 <div class="slds-truncate">{employee.No}</div>
@@ -121,6 +121,8 @@
                 </tbody>
             </table>
         </div>
+        <c-common-paging total-record={getTotalRecord} item-per-page={itemPerPage} onpaging={handlePagingEvent}
+            current-page={currentPage}></c-common-paging>
     </div>
-    <c-common-paging></c-common-paging>
+    <div if:true={getIsShowNotHasRecord} class="slds-text-heading_medium slds-text-color_error">No record</div>
 </template>
