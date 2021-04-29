@@ -41,7 +41,7 @@ export default class EmployeeListCmp extends LightningElement {
     handleSearchEmployees() {
         // Hiển thị loading
         this.isSearching = true;
-        console.log('search1: ' + this.isSearching);
+  
         setTimeout(() => {
             searchEmployees({ nameSearch: this.searchInput.name, phoneSearch: this.searchInput.phone })
                 .then((result) => {
@@ -50,15 +50,10 @@ export default class EmployeeListCmp extends LightningElement {
                     this.error = undefined;
                     // ẩn loading
                     this.isSearching = false;
-                    console.log('search: ' + this.isSearching);
-
+            
                     // Toast message success
-                    const event = new ShowToastEvent({
-                        title: 'Message',
-                        message: 'Search data was successfully.',
-                        variant: 'success'
-                    });
-                    this.dispatchEvent(event);
+                    this.raiseToaseEvent('Search data was successfully.', 'success');
+                  
                     // Hiển thị lại list
                     this.currentPage = 1;
                     this.displayEmployees();
@@ -76,6 +71,16 @@ export default class EmployeeListCmp extends LightningElement {
                     this.dispatchEvent(event);
                 });
         }, 300);
+    }
+
+    raiseToaseEvent(strMessage, strVariant) {
+         // Toast message error
+         const event = new ShowToastEvent({
+            title: 'Message',
+            message: strMessage,
+            variant: strVariant
+        });
+        this.dispatchEvent(event);
     }
 
     handleOpenModalUpsertEmployee(event) {
@@ -153,12 +158,11 @@ export default class EmployeeListCmp extends LightningElement {
     }
 
     get getVisibilityIconSearching() {
-        console.log('getVisibilityIconSearching' + this.isSearching);
         return (this.isSearching) ? 'icon-searching' : 'icon-searching hidden-loading';
     }
 
     get getIsShowNotHasRecord() {
-        if (this.length == 0) {
+        if (this.employees.length == 0) {
             return true;
         }
         return false;
