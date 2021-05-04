@@ -1,6 +1,4 @@
 import { LightningElement, api, track } from 'lwc';
-
-import upSertEmployee from '@salesforce/apex/EmployeeController.upSertEmployee';
 import insertEmployee from '@salesforce/apex/EmployeeController.insertEmployee';
 
 import { ShowToastEvent } from 'lightning/platformShowToastEvent';
@@ -107,7 +105,8 @@ export default class EmployeeEditCmp extends LightningElement {
                 if(msg.variant == 'success') {
                     if(this.checked) {
                         this.dispatchEvent(new CustomEvent('savedemployee'));
-                    }          
+                    }
+                    this.dispatchEvent(new CustomEvent('saveemptolist', {detail: inputEmp}));
                 }
                 this.closeModalHandler();
                 

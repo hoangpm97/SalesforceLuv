@@ -91,9 +91,9 @@
                                 <div class="slds-truncate">{employee.No}</div>
                             </th>
                             <th data-label="SelectedItem">
-                                <input if:true={employee.isChecked} data-id={employee.Id} data-no={employee.No} data-checked='checked'
+                                <input if:true={employee.isSelected} data-id={employee.Id} data-no={employee.No} data-checked='checked'
                                     type="radio" name="selected-emp" checked onchange={handleSelectedDetail} />
-                                <input if:false={employee.isChecked} data-id={employee.Id} data-no={employee.No} data-checked='unchecked'
+                                <input if:false={employee.isSelected} data-id={employee.Id} data-no={employee.No} data-checked='unchecked'
                                     type="radio" name="selected-emp" onchange={handleSelectedDetail} />
                             </th>
                             <td data-label="Name">

@@ -27,13 +27,18 @@ export default class EmployeePage extends LightningElement {
         this.dataEdit.isShow = false;
     }
     
-    savedEmployee(event) {
+    savedEmployee() {
         this.template.querySelector('c-employee-list-cmp').handleDispatchDetailEmployees();
        
     }
 
     handleShowDetailEmployee = (event) => {
         this.dataDetail.employee = event.detail;
+    }
+
+    savedEmpTolist(event) {
+        console.log('page: ', JSON.stringify(event.detail));
+        this.template.querySelector('c-employee-list-cmp').handleUpsertEmployee(event.detail);
     }
 
 

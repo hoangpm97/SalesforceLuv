@@ -7,7 +7,7 @@ import getDetailEmployeeById from '@salesforce/apex/EmployeeController.getDetail
 import { ShowToastEvent } from 'lightning/platformShowToastEvent';
 export default class EmployeeListCmp extends LightningElement {
     @track employees = [];
-    displayingEmployees;
+    @track displayingEmployees = [];
     error;
     employeeDetail;
     @track isSearching = false;
@@ -47,7 +47,7 @@ export default class EmployeeListCmp extends LightningElement {
             var objectEmp = {
                 ...employee,
                 No: index + 1,
-                isChecked: false
+                isSelected: false
             }
             empTemp.push(objectEmp);
         });
@@ -147,6 +147,7 @@ export default class EmployeeListCmp extends LightningElement {
     handleSelectedDetail(event) {
         this.idEmployee = event.target.dataset.id;
         this.employeeNo = event.target.dataset.no;
+       
         this.handleDispatchDetailEmployees();
     }
 
@@ -161,6 +162,13 @@ export default class EmployeeListCmp extends LightningElement {
                 }
                 this.employeeDetail = objEmp;
                 this.error = undefined;
+                for(let i = 0; i < this.employees.length; i++) {
+                    if (this.employees[i].No == this.employeeNo) {
+                        this.employees[i].isSelected = true;
+                    } else {
+                        this.employees[i].isSelected = false;
+                    }
+                }
                 // khởi tạo dispatch id employee để hiển thi detail employee
                 const checkedEvent = new CustomEvent('getdetail', { detail: this.employeeDetail });
                 this.dispatchEvent(checkedEvent);
@@ -170,6 +178,25 @@ export default class EmployeeListCmp extends LightningElement {
                 this.employeeDetail = undefined;
                 this.error = error;
             });
+    }
+
+    // Xử lý hiển thị các bản ghi thay đổi sau khi add hoặc edit
+    @api
+    handleUpsertEmployee(employee) {
+        let empTemp = this.findEmployeeById(employee.Id);
+        if (empTemp === undefined) {
+            let addedEmp = {
+                ...employee,
+                No: '-',
+                isSelected: false
+            }
+            this.displayingEmployees.push(addedEmp);
+            this.employees.push(addedEmp);
+        } else {
+            let index = employee.No - (this.currentPage - 1) * this.itemPerPage - 1;
+            this.displayingEmployees[index] = employee;
+            this.employees[employee.No - 1] = employee;
+        }
     }
 
     // Get tổng số bản ghi
