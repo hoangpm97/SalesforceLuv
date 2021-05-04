@@ -2,7 +2,7 @@ public with sharing class EmployeeController {
 
     @AuraEnabled
     public static List<Employee__c> searchEmployees(String nameSearch, String phoneSearch){
-        String strSQL = 'SELECT Id, Name, Phone__c, BirthDay__c, Email__c ';
+        String strSQL = 'SELECT Id, Name, Phone__c, BirthDay__c, Email__c, Memo__c ';
         strSQL += ' FROM Employee__c ';
         strSQL += ' WHERE Id != null ';
         
@@ -27,7 +27,7 @@ public with sharing class EmployeeController {
         return Database.query(strSQL);
     }
 
-    @AuraEnabled(cacheable=true)
+    @AuraEnabled
     public static Employee__c getDetailEmployeeById(String employeeId){
         return [
             SELECT Id, Name, Email__c, Phone__c, BirthDay__c, Memo__c 

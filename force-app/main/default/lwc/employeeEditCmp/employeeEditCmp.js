@@ -107,9 +107,7 @@ export default class EmployeeEditCmp extends LightningElement {
                 if(msg.variant == 'success') {
                     if(this.checked) {
                         this.dispatchEvent(new CustomEvent('savedemployee'));
-                    }
-                    console.log(this.employee.Id);
-                    
+                    }          
                 }
                 this.closeModalHandler();
                 

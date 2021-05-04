@@ -9,8 +9,4 @@ export default class EmployeeDetailCmp extends LightningElement {
         }
         else return false;
     }
-
-    handleClick () {
-        console.log(this.employee);
-    }
 }

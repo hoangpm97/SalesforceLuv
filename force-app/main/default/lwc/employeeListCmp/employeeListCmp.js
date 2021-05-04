@@ -15,6 +15,7 @@ export default class EmployeeListCmp extends LightningElement {
     @track currentPage = 1;
     @track isShowNotHasRecord = false;
     @track isRefreshing = false;
+    @track checkEmployee = false;
 
 
     @track searchInput = {
@@ -31,7 +32,6 @@ export default class EmployeeListCmp extends LightningElement {
     wiredEmployees({ error, data }) {
         if (data) {
             this.fetchDataEmployee(data);
-            console.log('emp: ' + JSON.stringify(this.employees));
             this.displayEmployees();
             this.error = undefined;
         } else if (error) {
@@ -57,7 +57,6 @@ export default class EmployeeListCmp extends LightningElement {
     // Hàm refresh page
     handleRefreshPage() {
         this.isRefreshing = true;
-        console.log('isRefreshing: ' + this.isRefreshing);
         setTimeout(() => {
             searchEmployees({ nameSearch: this.searchInput.name, phoneSearch: this.searchInput.phone })
                 .then((result) => {
@@ -77,7 +76,6 @@ export default class EmployeeListCmp extends LightningElement {
                     this.raiseToaseEvent('System error. Please reload page.', 'error');
                 })
         }, 300);
-        console.log('isRefreshing: ' + this.isRefreshing);
     }
 
 
@@ -93,7 +91,6 @@ export default class EmployeeListCmp extends LightningElement {
             searchEmployees({ nameSearch: this.searchInput.name, phoneSearch: this.searchInput.phone })
                 .then((result) => {
                     this.fetchDataEmployee(result);
-                    console.log('emp: ' + JSON.stringify(this.employees));
                     // Lấy kết quả search
                     this.error = undefined;
                     // ẩn loading
@@ -129,11 +126,14 @@ export default class EmployeeListCmp extends LightningElement {
     }
 
     handleOpenModalUpsertEmployee(event) {
+        console.log('handleOpenModalUpsertEmployee');
         let employeeId = event.target.dataset.id;
-        let check = this.template.querySelector(`[data-id="${employeeId}"]`).checked;
+        let check = false;
         
         let employee = {};
         if (employeeId != undefined) {
+            check = this.template.querySelector(`[data-id="${employeeId}"]`).checked;
+            console.log('check', check);
             employee = this.findEmployeeById(employeeId);
         }
         this.dispatchEvent(new CustomEvent('openmodalupsertemployee', { detail: { employees: JSON.stringify(employee), checked : check}  }))
@@ -144,23 +144,15 @@ export default class EmployeeListCmp extends LightningElement {
         return this.employees.find(emp => emp.Id == employeeId);
     }
 
-    @api
-    changeDetailAction(id) {
-        console.log('changeDetailAction', id);
-        this.idEmployee = id;
-        // this.employeeNo = event.target.dataset.no;
-        this.handleDispatchDetailEmployees(event);
-    }
-
     handleSelectedDetail(event) {
         this.idEmployee = event.target.dataset.id;
         this.employeeNo = event.target.dataset.no;
-        this.handleDispatchDetailEmployees(event);
+        this.handleDispatchDetailEmployees();
     }
 
     // Lấy và Gửi employee đã tìm kiếm qua EmployeeId
     @api
-    handleDispatchDetailEmployees(event) {
+    handleDispatchDetailEmployees() {
         getDetailEmployeeById({ employeeId: this.idEmployee })
             .then((result) => {
                 let objEmp = {
@@ -169,8 +161,6 @@ export default class EmployeeListCmp extends LightningElement {
                 }
                 this.employeeDetail = objEmp;
                 this.error = undefined;
-                console.log('Detail', JSON.stringify(this.employeeDetail));
-                event.preventDefault();
                 // khởi tạo dispatch id employee để hiển thi detail employee
                 const checkedEvent = new CustomEvent('getdetail', { detail: this.employeeDetail });
                 this.dispatchEvent(checkedEvent);
@@ -207,8 +197,6 @@ export default class EmployeeListCmp extends LightningElement {
             displayItems.push(this.employees[i]);
         }
         this.displayingEmployees = displayItems;
-
-
     }
 
     get getVisibilityIconSearching() {
@@ -227,6 +215,7 @@ export default class EmployeeListCmp extends LightningElement {
     handleDeleteEmployee(event) {
         let data = event.target.dataset;
         let confirmDelete = window.confirm('Do you want to delete employee: [' + data.name + ']');
+        this.checkEmployee = this.template.querySelector(`[data-id="${data.id}"]`).checked;
         if(confirmDelete) {
             deleteEmployee({ employeeId: data.id })
             .then((result) => {
@@ -238,11 +227,12 @@ export default class EmployeeListCmp extends LightningElement {
                     variant: msg.variant
                 });
 
-                // hien thi thay doi cua employee len component Detail khi edit thanh cong
-                // if(msg.variant == 'success') {
-                //     console.log(this.employee.Id);
-                //     this.dispatchEvent(new CustomEvent('savedemployee', { detail: JSON.stringify(msg) }));
-                // }
+                //hien thi thay doi cua employee len component Detail khi delete thanh cong
+                if(msg.variant == 'success') {                  
+                    if(this.checkEmployee) {
+                        this.dispatchEvent(new CustomEvent('getdetail', { detail: undefined }));
+                    }    
+                }
                 this.dispatchEvent(event);
                 
             }).catch((error) => {
