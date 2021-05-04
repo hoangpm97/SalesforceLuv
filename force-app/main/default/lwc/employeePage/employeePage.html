@@ -9,6 +9,6 @@
         </div>
     </div>
     <c-employee-edit-cmp if:true={dataEdit.isShow} oncloseeditemployee={closeModalEditEmployee} onsavedemployee={savedEmployee}
-        employee={dataEdit.employee}>
+        employee={dataEdit.employee} checked={dataEdit.checked}> 
     </c-employee-edit-cmp>
 </template>

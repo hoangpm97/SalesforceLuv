@@ -3,7 +3,8 @@ import { LightningElement, track , api} from 'lwc';
 export default class EmployeePage extends LightningElement {
     @track dataEdit = {
         isShow: false,
-        employee: {}
+        employee: {},
+        checked : false
     }
 
 
@@ -16,7 +17,10 @@ export default class EmployeePage extends LightningElement {
     @track employeedetail;
 
     openModalEditEmployee(event) {
-        this.dataEdit.employee = JSON.parse(event.detail);
+        this.dataEdit.employee = JSON.parse(event.detail.employees);
+        this.dataEdit.checked = event.detail.checked;
+        console.log('employee1', this.dataEdit.employee);
+        console.log('check', this.dataEdit.checked);
         this.dataEdit.isShow = true;
     }
 
@@ -25,8 +29,9 @@ export default class EmployeePage extends LightningElement {
     }
     
     savedEmployee(event) {
-        this.dataEdit.employee = JSON.parse(event.detail);
-        console.log('employee page: ' + this.dataEdit.employee.Name);
+        console.log('save Employee', event.detail);
+        this.template.querySelector('c-employee-list-cmp').handleDispatchDetailEmployees();
+       
     }
 
     handleShowDetailEmployee = (event) => {

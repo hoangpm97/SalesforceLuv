@@ -6,6 +6,7 @@ import insertEmployee from '@salesforce/apex/EmployeeController.insertEmployee';
 import { ShowToastEvent } from 'lightning/platformShowToastEvent';
 export default class EmployeeEditCmp extends LightningElement {
     @api employee;
+    @api checked;
     @track validator = {};
     @track isAdd = false;
     @track isSaving = false;
@@ -98,13 +99,18 @@ export default class EmployeeEditCmp extends LightningElement {
                     "message": msg.message,
                     variant: msg.variant
                 });
+                console.log('edit checked', this.employee.Id);
 
                 // hien thi thay doi cua employee len component Detail khi edit thanh cong
-                if(msg.variant == 'success') {
-                    console.log(this.employee.Id);
-                    this.dispatchEvent(new CustomEvent('savedemployee', { detail: JSON.stringify(msg) }));
-                }
+                
                 this.dispatchEvent(event);
+                if(msg.variant == 'success') {
+                    if(this.checked) {
+                        this.dispatchEvent(new CustomEvent('savedemployee'));
+                    }
+                    console.log(this.employee.Id);
+                    
+                }
                 this.closeModalHandler();
                 
             }).catch((error) => {

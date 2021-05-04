@@ -78,4 +78,24 @@ public with sharing class EmployeeController {
         result.put('variant', 'success');
         return JSON.serialize(result);
     }
+
+    @AuraEnabled
+    public static String deleteEmployee(String employeeId) {
+
+        Map<String, Object> result = new Map<String, Object>();
+
+        List<Employee__C> employeeObj = [SELECT Id FROM Employee__C WHERE Id = :employeeId];
+        if(employeeObj.size() == 0) {
+            // thong bao khi update 1 employee khong ton tai
+                result.put('title', 'Error!');
+                result.put('message', 'Employee is not exist!');
+                result.put('variant', 'error');
+        } else {
+            delete(employeeObj);
+            result.put('title', 'Success!');
+            result.put('message', 'Employee is deleted successfully!');
+            result.put('variant', 'success');
+        }
+        return JSON.serialize(result);
+    }
 }

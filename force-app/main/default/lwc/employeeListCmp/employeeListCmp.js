@@ -1,6 +1,7 @@
-import { LightningElement, track, wire } from 'lwc';
+import { LightningElement, track, wire, api } from 'lwc';
 import getEmployeeList from '@salesforce/apex/EmployeeController.getEmployeeList';
 import searchEmployees from '@salesforce/apex/EmployeeController.searchEmployees';
+import deleteEmployee from '@salesforce/apex/EmployeeController.deleteEmployee';
 import getDetailEmployeeById from '@salesforce/apex/EmployeeController.getDetailEmployeeById';
 
 import { ShowToastEvent } from 'lightning/platformShowToastEvent';
@@ -129,11 +130,13 @@ export default class EmployeeListCmp extends LightningElement {
 
     handleOpenModalUpsertEmployee(event) {
         let employeeId = event.target.dataset.id;
+        let check = this.template.querySelector(`[data-id="${employeeId}"]`).checked;
+        
         let employee = {};
         if (employeeId != undefined) {
             employee = this.findEmployeeById(employeeId);
         }
-        this.dispatchEvent(new CustomEvent('openmodalupsertemployee', { detail: JSON.stringify(employee) }))
+        this.dispatchEvent(new CustomEvent('openmodalupsertemployee', { detail: { employees: JSON.stringify(employee), checked : check}  }))
 
     }
 
@@ -141,7 +144,13 @@ export default class EmployeeListCmp extends LightningElement {
         return this.employees.find(emp => emp.Id == employeeId);
     }
 
-
+    @api
+    changeDetailAction(id) {
+        console.log('changeDetailAction', id);
+        this.idEmployee = id;
+        // this.employeeNo = event.target.dataset.no;
+        this.handleDispatchDetailEmployees(event);
+    }
 
     handleSelectedDetail(event) {
         this.idEmployee = event.target.dataset.id;
@@ -150,6 +159,7 @@ export default class EmployeeListCmp extends LightningElement {
     }
 
     // Lấy và Gửi employee đã tìm kiếm qua EmployeeId
+    @api
     handleDispatchDetailEmployees(event) {
         getDetailEmployeeById({ employeeId: this.idEmployee })
             .then((result) => {
@@ -159,7 +169,7 @@ export default class EmployeeListCmp extends LightningElement {
                 }
                 this.employeeDetail = objEmp;
                 this.error = undefined;
-                console.log(JSON.stringify(this.employeeDetail));
+                console.log('Detail', JSON.stringify(this.employeeDetail));
                 event.preventDefault();
                 // khởi tạo dispatch id employee để hiển thi detail employee
                 const checkedEvent = new CustomEvent('getdetail', { detail: this.employeeDetail });
@@ -211,6 +221,39 @@ export default class EmployeeListCmp extends LightningElement {
             return true;
         }
         return false;
+    }
+
+    // delete Employee
+    handleDeleteEmployee(event) {
+        let data = event.target.dataset;
+        let confirmDelete = window.confirm('Do you want to delete employee: [' + data.name + ']');
+        if(confirmDelete) {
+            deleteEmployee({ employeeId: data.id })
+            .then((result) => {
+                let msg = JSON.parse(result);
+                console.log(msg);
+                const event = new ShowToastEvent({
+                    "title": msg.title,
+                    "message": msg.message,
+                    variant: msg.variant
+                });
+
+                // hien thi thay doi cua employee len component Detail khi edit thanh cong
+                // if(msg.variant == 'success') {
+                //     console.log(this.employee.Id);
+                //     this.dispatchEvent(new CustomEvent('savedemployee', { detail: JSON.stringify(msg) }));
+                // }
+                this.dispatchEvent(event);
+                
+            }).catch((error) => {
+                const event = new ShowToastEvent({
+                    "title": 'Error!',
+                    "message": 'System error. Please reload page.',
+                    variant: 'error'
+                });
+                this.dispatchEvent(event);
+            });
+        }
     }
 
 }
