@@ -91,14 +91,17 @@ export default class EmployeeEditCmp extends LightningElement {
             insertEmployee({model: inputEmployee})
             .then((result) => {
                 let msg = JSON.parse(result);
-                console.log(msg);
+                console.log('msg' + msg);
+                console.log('emp1 : ', JSON.stringify(inputEmp));
+                inputEmp.Id = msg.empid;
+                console.log('empid : ', msg.empid);
+                console.log('emp2 : ', JSON.stringify(inputEmp));
                 const event = new ShowToastEvent({
                     "title": msg.title,
                     "message": msg.message,
                     variant: msg.variant
                 });
-                console.log('edit checked', this.employee.Id);
-
+                
                 // hien thi thay doi cua employee len component Detail khi edit thanh cong
                 
                 this.dispatchEvent(event);

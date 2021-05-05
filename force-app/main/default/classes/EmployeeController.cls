@@ -72,10 +72,13 @@ public with sharing class EmployeeController {
 
         // save to DB
         upsert employeeObj;
+
+
         // thong bao khi insert hoac update thanh cong
         result.put('title', 'Success!');
         result.put('message', 'Employee is saved successfully!');
         result.put('variant', 'success');
+        result.put('empid', employeeObj.Id);
         return JSON.serialize(result);
     }
 
