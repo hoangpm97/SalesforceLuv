@@ -112,7 +112,7 @@ export default class EmployeeListCmp extends LightningElement {
 
                 })
         }, 300);
-
+        
     }
 
     raiseToaseEvent(strMessage, strVariant) {
@@ -128,13 +128,13 @@ export default class EmployeeListCmp extends LightningElement {
     handleOpenModalUpsertEmployee(event) {
         let employeeId = event.target.dataset.id;
         let check = false;
-
+        
         let employee = {};
         if (employeeId != undefined) {
             check = this.template.querySelector(`[data-id="${employeeId}"]`).checked;
             employee = this.findEmployeeById(employeeId);
         }
-        this.dispatchEvent(new CustomEvent('openmodalupsertemployee', { detail: { employees: JSON.stringify(employee), checked: check } }))
+        this.dispatchEvent(new CustomEvent('openmodalupsertemployee', { detail: { employees: JSON.stringify(employee), checked : check}  }))
 
     }
 
@@ -145,7 +145,7 @@ export default class EmployeeListCmp extends LightningElement {
     handleSelectedDetail(event) {
         this.idEmployee = event.target.dataset.id;
         this.employeeNo = event.target.dataset.no;
-
+       
         this.handleDispatchDetailEmployees();
     }
 
@@ -160,7 +160,7 @@ export default class EmployeeListCmp extends LightningElement {
                 }
                 this.employeeDetail = objEmp;
                 this.error = undefined;
-                for (let i = 0; i < this.employees.length; i++) {
+                for(let i = 0; i < this.employees.length; i++) {
                     if (this.employees[i].Id == this.idEmployee) {
                         this.employees[i].isSelected = true;
                     } else {
@@ -191,24 +191,19 @@ export default class EmployeeListCmp extends LightningElement {
             }
             this.displayingEmployees.push(addedEmp);
             this.employees.push(addedEmp);
-
+            
         } else {
-            if (employee.No !== '-') {
-                let index = employee.No - (this.currentPage - 1) * this.itemPerPage - 1;
+            // if (employee.No !== '-') {
+            //     let index = this.findIndexEmployeeFromListDisplay(employee.Id);
+            //     this.displayingEmployees[index] = employee;
+            //     this.employees[employee.No - 1] = employee;
+            // } else {
+                let index = this.findIndexEmployeeFromListDisplay(employee.Id);
                 this.displayingEmployees[index] = employee;
-                this.employees[employee.No - 1] = employee;
-            } else {
-                let index = 0;
-                for (let i = 0; i < this.displayingEmployees.length; i++) {
-                    if (this.displayingEmployees[i].Id === employee.Id) {
-                        index = i;
-                    }
-                }
-                this.displayingEmployees[index] = employee;
-                let index1 = (this.currentPage - 1) * this.itemPerPage + index;
+                let index1 = (this.currentPage - 1) * this.itemPerPage+ index;
                 this.employees[index1] = employee;
-            }
-
+            // }
+            
         }
     }
 
@@ -244,7 +239,7 @@ export default class EmployeeListCmp extends LightningElement {
     }
 
     get getIsShowNotHasRecord() {
-
+        
         if (this.employees.length == 0) {
             return true;
         }
@@ -253,8 +248,18 @@ export default class EmployeeListCmp extends LightningElement {
 
     findIndexEmployeeFromListDisplay(employeeId) {
         let index = 0;
-        for (let i = 0; i < this.displayingEmployees.length; i++) {
+        for(let i = 0; i < this.displayingEmployees.length; i++) {
             if (this.displayingEmployees[i].Id === employeeId) {
+                index = i;
+            }
+        }
+        return index;
+    }
+
+    findIndexEmployeeFromListAll(employeeId) {
+        let index = 0;
+        for(let i = 0; i < this.employees.length; i++) {
+            if (this.employees[i].Id === employeeId) {
                 index = i;
             }
         }
@@ -263,17 +268,43 @@ export default class EmployeeListCmp extends LightningElement {
 
     // Hiển thị lại list sau khi delete items
     handleDisplayDeleteEmployee(employeeId) {
-        let index = this.findIndexEmployeeFromListDisplay(employeeId);
-        console.log('index: ' + index);
-        this.displayingEmployees.splice(index, 1);
-        let index1 = (this.currentPage - 1) * this.itemPerPage + index;
-        console.log('index1: ', index1);
-        this.employees.splice(index1, 1);
-        if (this.displayingEmployees.length == 0) {
-            this.currentPage--;
-        }
-        console.log('length: ', this.displayingEmployees.length);
-        this.displayEmployees();
+      
+            let employee = this.findEmployeeById(employeeId);
+            if (employee.No === '-') {
+                let index = this.findIndexEmployeeFromListDisplay(employeeId);
+                console.log('index: ' + index);
+                this.displayingEmployees.splice(index, 1);
+                let index1 = this.findIndexEmployeeFromListAll(employeeId);
+                console.log('index1: ', index1);
+                this.employees.splice(index1, 1);
+            } else {
+                let index = this.findIndexEmployeeFromListDisplay(employeeId);
+                console.log('index: ' + index);
+                this.displayingEmployees.splice(index, 1);
+                let index1 = (this.currentPage - 1) * this.itemPerPage+ index;
+                console.log('index1: ', index1);
+                this.employees.splice(index1, 1);
+                if (this.displayingEmployees.length == 0) {
+                    this.currentPage--;
+                }
+                console.log('length: ', index1);
+                this.displayEmployees();
+                // let index2 = this.itemPerPage * this.currentPage - 1;
+                // let indexLast = this.employees.length - (this.employees.length % this.itemPerPage);
+                // console.log('index2: ', index2);
+                // console.log('indexLast: ', indexLast);
+                // console.log('length: ', this.displayingEmployees.length);
+                // if (index2 < indexLast) {
+                //     this.displayingEmployees.push(this.employees[index2]);
+                // } else {
+                //     if (this.displayingEmployees.length == 0) {
+                //         this.currentPage--;
+                //     }
+                //     this.displayEmployees();
+                // }
+            }
+            
+        
     }
 
     // thực hiện delete Employee
@@ -281,34 +312,34 @@ export default class EmployeeListCmp extends LightningElement {
         let data = event.target.dataset;
         let confirmDelete = window.confirm('Do you want to delete employee: [' + data.name + ']');
         this.checkEmployee = this.template.querySelector(`[data-id="${data.id}"]`).checked;
-        if (confirmDelete) {
+        if(confirmDelete) {
             deleteEmployee({ employeeId: data.id })
-                .then((result) => {
-                    let msg = JSON.parse(result);
-                    const event = new ShowToastEvent({
-                        "title": msg.title,
-                        "message": msg.message,
-                        variant: msg.variant
-                    });
-
-                    //hien thi thay doi cua employee len component Detail khi delete thanh cong
-                    if (msg.variant == 'success') {
-                        if (this.checkEmployee) {
-                            this.dispatchEvent(new CustomEvent('getdetail', { detail: undefined }));
-                        }
-                        this.handleDisplayDeleteEmployee(data.id);
-
-                    }
-                    this.dispatchEvent(event);
-
-                }).catch((error) => {
-                    const event = new ShowToastEvent({
-                        "title": 'Error!',
-                        "message": 'System error. Please reload page.',
-                        variant: 'error'
-                    });
-                    this.dispatchEvent(event);
+            .then((result) => {
+                let msg = JSON.parse(result);
+                const event = new ShowToastEvent({
+                    "title": msg.title,
+                    "message": msg.message,
+                    variant: msg.variant
                 });
+
+                //hien thi thay doi cua employee len component Detail khi delete thanh cong
+                if(msg.variant == 'success') {                  
+                    if(this.checkEmployee) {
+                        this.dispatchEvent(new CustomEvent('getdetail', { detail: undefined }));
+                    }
+                    this.handleDisplayDeleteEmployee(data.id);
+                    
+                }
+                this.dispatchEvent(event);
+                
+            }).catch((error) => {
+                const event = new ShowToastEvent({
+                    "title": 'Error!',
+                    "message": 'System error. Please reload page.',
+                    variant: 'error'
+                });
+                this.dispatchEvent(event);
+            });
         }
     }
 
