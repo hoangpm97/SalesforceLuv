@@ -205,6 +205,7 @@ export default class EmployeeListCmp extends LightningElement {
                 let index1 = this.findIndexEmployeeFromListAll(employee.Id);
                 console.log('index1: ', index1);
                 this.employees[index1] = employee;
+                console.log('abc');
             // }
             
         }
