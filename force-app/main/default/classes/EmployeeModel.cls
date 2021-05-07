@@ -12,4 +12,6 @@ public with sharing class EmployeeModel {
     public Date BirthDay { get; set; }
     @AuraEnabled
     public String Phone { get; set; }
+    @AuraEnabled
+    public String LastModifiedDate { get; set; }
 }
