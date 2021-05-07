@@ -69,7 +69,6 @@ export default class EmployeeListCmp extends LightningElement {
                     });
                     this.error = undefined;
                     // Hiển thị lại list
-                    console.log('currentPage: ' + this.currentPage);
                     this.displayEmployees();
                     this.raiseToaseEvent('Refresh page was successfully.', 'success');
                     this.isRefreshing = false;
@@ -149,7 +148,6 @@ export default class EmployeeListCmp extends LightningElement {
 
     handleSelectedDetail(event) {
         this.idEmployee = event.target.dataset.id;
-        console.log('select: ', this.idEmployee);
         this.employeeNo = event.target.dataset.no;
 
         this.handleDispatchDetailEmployees();
@@ -271,10 +269,8 @@ export default class EmployeeListCmp extends LightningElement {
         let employee = this.findEmployeeById(employeeId);
         if (employee.No === '-') {
             let index = this.findIndexEmployeeFromListDisplay(employeeId);
-            console.log('index: ' + index);
             this.displayingEmployees.splice(index, 1);
             let index1 = this.findIndexEmployeeFromListAll(employeeId);
-            console.log('index1: ', index1);
             this.employees.splice(index1, 1);
         } else {
             let index = this.findIndexEmployeeFromListDisplay(employeeId);
@@ -284,8 +280,6 @@ export default class EmployeeListCmp extends LightningElement {
             if (this.displayingEmployees.length == 0) {
                 this.currentPage--;
             }
-            console.log('index1: ', index1);
-            console.log('index2: ', index2);
             this.displayEmployees();
         }
 
