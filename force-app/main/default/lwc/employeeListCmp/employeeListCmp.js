@@ -146,7 +146,6 @@ export default class EmployeeListCmp extends LightningElement {
 
     handleSelectedDetail(event) {
         this.idEmployee = event.target.dataset.id;
-        console.log('select: ', this.idEmployee);
         this.employeeNo = event.target.dataset.no;
 
         this.handleDispatchDetailEmployees();

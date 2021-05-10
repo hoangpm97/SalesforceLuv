@@ -2,7 +2,7 @@ public with sharing class EmployeeController {
 
     @AuraEnabled
     public static List<Employee__c> searchEmployees(String nameSearch, String phoneSearch){
-        String strSQL = 'SELECT Id, Name, Phone__c, BirthDay__c, Email__c, Memo__c ';
+        String strSQL = 'SELECT Id, Name, Phone__c, BirthDay__c, Email__c, Memo__c, LastModifiedDate ';
         strSQL += ' FROM Employee__c ';
         strSQL += ' WHERE Id != null ';
         
@@ -23,14 +23,14 @@ public with sharing class EmployeeController {
 
     @AuraEnabled(cacheable=true)
     public static List<Employee__c> getEmployeeList(){
-        String strSQL = 'SELECT Id, Name, Phone__c, BirthDay__c, Email__c, Memo__c FROM Employee__c ORDER BY Name ASC';
+        String strSQL = 'SELECT Id, Name, Phone__c, BirthDay__c, Email__c, Memo__c, LastModifiedDate FROM Employee__c ORDER BY Name ASC';
         return Database.query(strSQL);
     }
 
     @AuraEnabled
     public static Employee__c getDetailEmployeeById(String employeeId){
         return [
-            SELECT Id, Name, Email__c, Phone__c, BirthDay__c, Memo__c 
+            SELECT Id, Name, Email__c, Phone__c, BirthDay__c, Memo__c, LastModifiedDate
             FROM Employee__c 
             WHERE Id = :employeeId
         ];
@@ -45,7 +45,7 @@ public with sharing class EmployeeController {
 
         if(model.Id != ''){
             // kiem tra ton tai cua employee
-            List<Employee__C> getEmployeeById = [SELECT Id FROM Employee__C WHERE Id = :model.Id];
+            List<Employee__C> getEmployeeById = [SELECT Id, LastModifiedDate FROM Employee__C WHERE Id = :model.Id];
             if(getEmployeeById.size() == 0) {
                 // thong bao khi update 1 employee khong ton tai
                 result.put('title', 'Error!');
@@ -53,6 +53,16 @@ public with sharing class EmployeeController {
                 result.put('variant', 'error');
                 return JSON.serialize(result);
             }
+            // validate modified date
+            String lastModifiedDate = getEmployeeById[0].LastModifiedDate.formatGMT('yyyy-MM-dd\'T\'HH:mm:ss');
+            if(lastModifiedDate != model.LastModifiedDate) {
+                result.put('title', 'Error!');
+                result.put('message', 'Employee is out of date. Please refresh page again.');
+                result.put('variant', 'error');
+                result.put('lastModifiedDate', lastModifiedDate);
+                
+                return JSON.serialize(result);
+            }           
             employeeObj.Id = model.Id;
 
         }
@@ -71,7 +81,19 @@ public with sharing class EmployeeController {
         result.put('message', 'Employee is saved successfully!');
         result.put('variant', 'success');
         result.put('empid', employeeObj.Id);
+        if(model.Id != '') { 
+            result.put('lastModifiedDate', getDetailEmployeeById(employeeObj.Id));
+        }
         return JSON.serialize(result);
+    }
+
+    @AuraEnabled
+    public static Employee__c getLastModifiedDate(String employeeId){
+        return [
+            SELECT LastModifiedDate
+            FROM Employee__c 
+            WHERE Id = :employeeId
+        ];
     }
 
     @AuraEnabled

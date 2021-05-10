@@ -73,6 +73,13 @@ export default class EmployeeEditCmp extends LightningElement {
     }
 
     saveEmployee() {
+        // format lastModifiedDate
+        var lastModifiedDate = this.employee.LastModifiedDate;
+        var pos = lastModifiedDate.lastIndexOf('.');
+        if(pos != -1) {
+            lastModifiedDate = lastModifiedDate.substring(0,pos);
+        }
+        console.log('lastModifiedDate Input', lastModifiedDate);
         // set value employee import vao model
         let inputEmployee = {
             Id: this.employee.Id,
@@ -81,11 +88,12 @@ export default class EmployeeEditCmp extends LightningElement {
             Phone: this.employee.Phone__c,
             BirthDay: this.employee.BirthDay__c,
             Memo: this.employee.Memo__c,
+            LastModifiedDate: lastModifiedDate
         };
+        
         // get message error chua nhap input (email, name or birthday)
         let inputEmp = Object.assign({}, this.employee);
         let isValid = this.validateInput(inputEmp);
-
         // validate input
         if(isValid) {
             insertEmployee({model: inputEmployee})
@@ -97,7 +105,7 @@ export default class EmployeeEditCmp extends LightningElement {
                     "message": msg.message,
                     variant: msg.variant
                 });
-                
+                inputEmp.LastModifiedDate = msg.lastModifiedDate.LastModifiedDate;
                 // hien thi thay doi cua employee len component Detail khi edit thanh cong
                 
                 this.dispatchEvent(event);
