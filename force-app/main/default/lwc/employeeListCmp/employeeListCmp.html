@@ -56,6 +56,9 @@
                 </div>
             </div>
         </div>
+        <div if:true={isSearchingOverLimit} class="slds-text-heading_small slds-text-color_error">
+            Maximum can show 2000 records, please search to filter less.
+        </div>
     <div if:false={getIsShowNotHasRecord} class="slds-box slds-p-around_none"> 
         <div style="max-height: 500px; overflow-y: auto;" class="slds-border_bottom">
             <table class="slds-table slds-table_cell-buffer slds-table_bordered">

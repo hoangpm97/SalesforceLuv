@@ -16,6 +16,7 @@ export default class EmployeeListCmp extends LightningElement {
     @track isShowNotHasRecord = false;
     @track isRefreshing = false;
     @track checkEmployee = false;
+    @track isSearchingOverLimit = false;
 
     @track searchInput = {
         name: '',
@@ -29,7 +30,9 @@ export default class EmployeeListCmp extends LightningElement {
     @wire(getEmployeeList)
     wiredEmployees({error, data }) {
         if (data) {
-            this.fetchDataEmployee(data);
+            let empData = JSON.parse(data);
+            this.fetchDataEmployee(empData.employees);
+            this.isSearchingOverLimit = empData.isSearchingOverLimit;
             this.displayEmployees();
             this.error = undefined;
         } else if (error) {
@@ -58,8 +61,10 @@ export default class EmployeeListCmp extends LightningElement {
         setTimeout(() => {
             searchEmployees({ nameSearch: this.searchInput.name, phoneSearch: this.searchInput.phone })
                 .then((result) => {
+                    let empData = JSON.parse(result);
                     // Lấy kết quả search
-                    this.fetchDataEmployee(result);                   
+                    this.fetchDataEmployee(empData.employees);
+                    this.isSearchingOverLimit = empData.isSearchingOverLimit;                   
                     this.employees.forEach(emp => {
                         if (emp.Id === this.idEmployee) {
                             emp.isSelected = true;
@@ -77,7 +82,7 @@ export default class EmployeeListCmp extends LightningElement {
                     // Toast message error
                     this.raiseToaseEvent('System error. Please reload page.', 'error');
                 })
-        }, 300);
+        }, 200);
     }
 
 
@@ -91,8 +96,9 @@ export default class EmployeeListCmp extends LightningElement {
         setTimeout(() => {
             searchEmployees({ nameSearch: this.searchInput.name, phoneSearch: this.searchInput.phone })
                 .then((result) => {
-                    this.fetchDataEmployee(result);
-                    
+                    let empData = JSON.parse(result);
+                    this.fetchDataEmployee(empData.employees);
+                    this.isSearchingOverLimit = empData.isSearchingOverLimit;
                     // Lấy kết quả search
                     this.error = undefined;
                     // ẩn loading
@@ -113,7 +119,7 @@ export default class EmployeeListCmp extends LightningElement {
                     this.raiseToaseEvent('An error has occured.', 'error');
 
                 })
-        }, 300);
+        }, 200);
 
     }
 

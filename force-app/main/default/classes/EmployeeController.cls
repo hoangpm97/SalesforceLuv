@@ -1,7 +1,8 @@
 public with sharing class EmployeeController {
+    private static final Integer LIMIT_RECORD_2001 = 2001;
 
     @AuraEnabled
-    public static List<Employee__c> searchEmployees(String nameSearch, String phoneSearch){
+    public static List<Employee__c> queryEmployees(String nameSearch, String phoneSearch){
         String strSQL = 'SELECT Id, Name, Phone__c, BirthDay__c, Email__c, Memo__c, LastModifiedDate ';
         strSQL += ' FROM Employee__c ';
         strSQL += ' WHERE Id != null ';
@@ -21,10 +22,38 @@ public with sharing class EmployeeController {
         return Database.query(strSQL);
     }
 
+    @AuraEnabled
+    public static String searchEmployees(String nameSearch, String phoneSearch) {
+        Map<String, Object> result = new Map<String, Object>();
+        Boolean isSearchingOverLimit = false;
+
+        // max 2000 employees can return
+        List<Employee__c> employees = queryEmployees(nameSearch, phoneSearch);
+        if(LIMIT_RECORD_2001 == employees.size()) {
+            isSearchingOverLimit = true;
+            employees.remove(LIMIT_RECORD_2001 - 1);
+        }
+
+        // return
+        result.put('isSearchingOverLimit', isSearchingOverLimit);
+        result.put('employees', employees);
+        return JSON.serialize(result);
+    }
+
     @AuraEnabled(cacheable=true)
-    public static List<Employee__c> getEmployeeList(){
+    public static String getEmployeeList(){
+        Map<String, Object> result = new Map<String, Object>();
+        Boolean isSearchingOverLimit = false;
         String strSQL = 'SELECT Id, Name, Phone__c, BirthDay__c, Email__c, Memo__c, LastModifiedDate FROM Employee__c ORDER BY Name ASC';
-        return Database.query(strSQL);
+        List<Employee__c> employees = Database.query(strSQL);
+        if(LIMIT_RECORD_2001 == employees.size()) {
+            isSearchingOverLimit = true;
+            employees.remove(LIMIT_RECORD_2001 - 1);
+        }
+        // return
+        result.put('isSearchingOverLimit', isSearchingOverLimit);
+        result.put('employees', employees);
+        return JSON.serialize(result);
     }
 
     @AuraEnabled
