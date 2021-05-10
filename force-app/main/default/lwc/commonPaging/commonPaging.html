@@ -11,12 +11,9 @@
         <div class="slds-col slds-size_2-of-12">
             <div class="slds-select_container select-page-size">
                 <select class="slds-select" onchange={changeItemPerPageHandler}>
-                    <option value="2">Show 2 Item Per Page</option>
-                    <option value="5">Show 5 Item Per Page</option>
-                    <option value="10">Show 10 Item Per Page</option>
-                    <option value="20">Show 20 Item Per Page</option>
-                    <option value="30">Show 30 Item Per Page</option>
-                    <option value="40">Show 40 Item Per Page</option>
+                    <template for:each={optionItemPerPage} for:item="option">
+                        <option key={option} value={option}>Show {option} Item Per Page</option>
+                    </template>
                 </select>
             </div>
         </div>

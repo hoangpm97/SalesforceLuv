@@ -17,7 +17,6 @@ export default class EmployeeListCmp extends LightningElement {
     @track isRefreshing = false;
     @track checkEmployee = false;
 
-
     @track searchInput = {
         name: '',
         phone: ''
@@ -26,9 +25,9 @@ export default class EmployeeListCmp extends LightningElement {
     @track idEmployee;
     @track employeeNo;
 
-    // Hiển thị list ban đầu
+    // Display list 
     @wire(getEmployeeList)
-    wiredEmployees({ error, data }) {
+    wiredEmployees({error, data }) {
         if (data) {
             this.fetchDataEmployee(data);
             this.displayEmployees();
@@ -60,8 +59,7 @@ export default class EmployeeListCmp extends LightningElement {
             searchEmployees({ nameSearch: this.searchInput.name, phoneSearch: this.searchInput.phone })
                 .then((result) => {
                     // Lấy kết quả search
-                    this.fetchDataEmployee(result);
-                    
+                    this.fetchDataEmployee(result);                   
                     this.employees.forEach(emp => {
                         if (emp.Id === this.idEmployee) {
                             emp.isSelected = true;
@@ -265,7 +263,6 @@ export default class EmployeeListCmp extends LightningElement {
 
     // Hiển thị lại list sau khi delete items
     handleDisplayDeleteEmployee(employeeId) {
-
         let employee = this.findEmployeeById(employeeId);
         if (employee.No === '-') {
             let index = this.findIndexEmployeeFromListDisplay(employeeId);
@@ -275,15 +272,14 @@ export default class EmployeeListCmp extends LightningElement {
         } else {
             let index = this.findIndexEmployeeFromListDisplay(employeeId);
             this.displayingEmployees.splice(index, 1);
-            let index2 = this.findIndexEmployeeFromListAll(employeeId);
+            let index1 = this.findIndexEmployeeFromListAll(employeeId);
             this.employees.splice(index1, 1);
             if (this.displayingEmployees.length == 0) {
                 this.currentPage--;
-            }
+            }  
             this.displayEmployees();
+            
         }
-
-
     }
 
     // thực hiện delete Employee
@@ -307,7 +303,6 @@ export default class EmployeeListCmp extends LightningElement {
                             this.dispatchEvent(new CustomEvent('getdetail', { detail: undefined }));
                         }
                         this.handleDisplayDeleteEmployee(data.id);
-
                     }
                     this.dispatchEvent(event);
 

@@ -28,7 +28,6 @@ export default class EmployeePage extends LightningElement {
     
     savedEmployee() {
         this.template.querySelector('c-employee-list-cmp').handleDispatchDetailEmployees();
-       
     }
 
     handleShowDetailEmployee = (event) => {
