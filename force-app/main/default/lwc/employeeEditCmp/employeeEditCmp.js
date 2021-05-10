@@ -74,12 +74,13 @@ export default class EmployeeEditCmp extends LightningElement {
 
     saveEmployee() {
         // format lastModifiedDate
-        var lastModifiedDate = this.employee.LastModifiedDate;
-        var pos = lastModifiedDate.lastIndexOf('.');
-        if(pos != -1) {
-            lastModifiedDate = lastModifiedDate.substring(0,pos);
+        if (this.employee.Id != '') {
+            var lastModifiedDate = this.employee.LastModifiedDate;
+            var pos = lastModifiedDate.lastIndexOf('.');
+            if(pos != -1) {
+                lastModifiedDate = lastModifiedDate.substring(0,pos);
+            }
         }
-        console.log('lastModifiedDate Input', lastModifiedDate);
         // set value employee import vao model
         let inputEmployee = {
             Id: this.employee.Id,
