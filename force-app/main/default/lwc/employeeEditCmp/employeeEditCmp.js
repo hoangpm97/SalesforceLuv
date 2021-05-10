@@ -80,7 +80,7 @@ export default class EmployeeEditCmp extends LightningElement {
             if(pos != -1) {
                 lastModifiedDate = lastModifiedDate.substring(0,pos);
             }
-        }
+        } 
         // set value employee import vao model
         let inputEmployee = {
             Id: this.employee.Id,
@@ -107,6 +107,7 @@ export default class EmployeeEditCmp extends LightningElement {
                     variant: msg.variant
                 });
                 inputEmp.LastModifiedDate = msg.lastModifiedDate.LastModifiedDate;
+                
                 // hien thi thay doi cua employee len component Detail khi edit thanh cong
                 
                 this.dispatchEvent(event);

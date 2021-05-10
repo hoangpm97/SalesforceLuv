@@ -81,9 +81,7 @@ public with sharing class EmployeeController {
         result.put('message', 'Employee is saved successfully!');
         result.put('variant', 'success');
         result.put('empid', employeeObj.Id);
-        if(model.Id != '') { 
-            result.put('lastModifiedDate', getDetailEmployeeById(employeeObj.Id));
-        }
+        result.put('lastModifiedDate', getDetailEmployeeById(employeeObj.Id));
         return JSON.serialize(result);
     }
 
