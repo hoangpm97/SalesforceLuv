@@ -35,14 +35,6 @@ public with sharing class EmployeeController {
             WHERE Id = :employeeId
         ];
     }
-    @AuraEnabled
-    public static string upSertEmployee(Employee__c objEmployee, Boolean isAdd){
-        if (isAdd) {
-            return '';
-        } else {
-            return '';
-        }
-    }
 
     @AuraEnabled
     public static String insertEmployee(EmployeeModel model){

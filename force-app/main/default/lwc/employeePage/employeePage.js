@@ -17,7 +17,6 @@ export default class EmployeePage extends LightningElement {
     @track employeedetail;
 
     openModalEditEmployee(event) {
-        console.log('openModalEditEmployee');
         this.dataEdit.employee = JSON.parse(event.detail.employees);
         this.dataEdit.checked = event.detail.checked;
         this.dataEdit.isShow = true;
@@ -29,7 +28,6 @@ export default class EmployeePage extends LightningElement {
     
     savedEmployee() {
         this.template.querySelector('c-employee-list-cmp').handleDispatchDetailEmployees();
-       
     }
 
     handleShowDetailEmployee = (event) => {
@@ -37,7 +35,6 @@ export default class EmployeePage extends LightningElement {
     }
 
     savedEmpTolist(event) {
-        console.log('page: ', JSON.stringify(event.detail));
         this.template.querySelector('c-employee-list-cmp').handleUpsertEmployee(event.detail);
     }
 
