@@ -41,7 +41,7 @@ export default class EmployeeListCmp extends LightningElement {
         }
     }
 
-    // Lấy data employee
+    // Get data employee
     fetchDataEmployee(dataEmp) {
         let empTemp = [];
         dataEmp.forEach((employee, index) => {
@@ -55,14 +55,14 @@ export default class EmployeeListCmp extends LightningElement {
         this.employees = empTemp
     }
 
-    // Hàm refresh page
+    // Method refresh page
     handleRefreshPage() {
         this.isRefreshing = true;
         setTimeout(() => {
             searchEmployees({ nameSearch: this.searchInput.name, phoneSearch: this.searchInput.phone })
                 .then((result) => {
                     let empData = JSON.parse(result);
-                    // Lấy kết quả search
+                    // Get result search
                     this.fetchDataEmployee(empData.employees);
                     this.isSearchingOverLimit = empData.isSearchingOverLimit;                   
                     this.employees.forEach(emp => {
@@ -71,7 +71,7 @@ export default class EmployeeListCmp extends LightningElement {
                         }
                     });
                     this.error = undefined;
-                    // Hiển thị lại list
+                    // Show list again
                     this.displayEmployees();
                     this.raiseToaseEvent('Refresh page was successfully.', 'success');
                     this.isRefreshing = false;
@@ -91,7 +91,7 @@ export default class EmployeeListCmp extends LightningElement {
     }
 
     handleSearchEmployees() {
-        // Hiển thị loading
+        // Show loading
         this.isSearching = true;
         setTimeout(() => {
             searchEmployees({ nameSearch: this.searchInput.name, phoneSearch: this.searchInput.phone })
@@ -99,15 +99,15 @@ export default class EmployeeListCmp extends LightningElement {
                     let empData = JSON.parse(result);
                     this.fetchDataEmployee(empData.employees);
                     this.isSearchingOverLimit = empData.isSearchingOverLimit;
-                    // Lấy kết quả search
+                    // Get result search
                     this.error = undefined;
-                    // ẩn loading
+                    // hide loading
                     this.isSearching = false;
 
                     // Toast message success
                     this.raiseToaseEvent('Search data was successfully.', 'success');
 
-                    // Hiển thị lại list
+                    // Show list again
                     this.currentPage = 1;
                     this.displayEmployees();
                 })
@@ -157,7 +157,7 @@ export default class EmployeeListCmp extends LightningElement {
         this.handleDispatchDetailEmployees();
     }
 
-    // Lấy và Gửi employee đã tìm kiếm qua EmployeeId
+    // Get and set employee searched through EmployeeId
     @api
     handleDispatchDetailEmployees() {
         getDetailEmployeeById({ employeeId: this.idEmployee })
@@ -175,7 +175,7 @@ export default class EmployeeListCmp extends LightningElement {
                         this.employees[i].isSelected = false;
                     }
                 }
-                // khởi tạo dispatch id employee để hiển thi detail employee
+                // Initialize and dispatch `id employee` to display the `detail employee`
                 const checkedEvent = new CustomEvent('getdetail', { detail: this.employeeDetail });
                 this.dispatchEvent(checkedEvent);
 
@@ -187,7 +187,7 @@ export default class EmployeeListCmp extends LightningElement {
     }
 
 
-    // Xử lý hiển thị các bản ghi thay đổi sau khi add hoặc edit
+    // Handling the display of changed records after adding or editing
     @api
     handleUpsertEmployee(employee) {
         let empTemp = this.findEmployeeById(employee.Id);
@@ -208,19 +208,19 @@ export default class EmployeeListCmp extends LightningElement {
         }
     }
 
-    // Get tổng số bản ghi
+    // Get the total number of records
     get getTotalRecord() {
         return this.employees.length;
     }
 
-    // Xử lý sự kiện paging
+    // Handling event paging
     handlePagingEvent(event) {
         this.currentPage = event.detail.currentPage;
         this.itemPerPage = event.detail.itemPerPage;
         this.displayEmployees();
     }
 
-    // Hiển thị list employee theo paging
+    // Display the employee list according to paging
     displayEmployees() {
         let displayItems = [];
         let from = (this.currentPage - 1) * this.itemPerPage;
@@ -267,7 +267,7 @@ export default class EmployeeListCmp extends LightningElement {
         return index;
     }
 
-    // Hiển thị lại list sau khi delete items
+    // Display the list again after delete items
     handleDisplayDeleteEmployee(employeeId) {
         let employee = this.findEmployeeById(employeeId);
         if (employee.No === '-') {
@@ -288,7 +288,7 @@ export default class EmployeeListCmp extends LightningElement {
         }
     }
 
-    // thực hiện delete Employee
+    // Perform delete Employee
     handleDeleteEmployee(event) {
         let data = event.target.dataset;
         let confirmDelete = window.confirm('Do you want to delete employee: [' + data.name + ']');
@@ -303,7 +303,7 @@ export default class EmployeeListCmp extends LightningElement {
                         variant: msg.variant
                     });
 
-                    //hien thi thay doi cua employee len component Detail khi delete thanh cong
+                    // Show changes of employee to Detail component when delete pass
                     if (msg.variant == 'success') {
                         if (this.checkEmployee) {
                             this.dispatchEvent(new CustomEvent('getdetail', { detail: undefined }));

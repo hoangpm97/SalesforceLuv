@@ -10,7 +10,7 @@ export default class EmployeeEditCmp extends LightningElement {
     @track isSaving = false;
 
 
-    // Get value hiển thị lên input
+    // Get value display up input
     connectedCallback() {
         if (JSON.stringify(this.employee) == {} || JSON.stringify(this.employee.Id) == undefined ) {
             this.employee = this.setDefaultValueAdd();
@@ -19,6 +19,7 @@ export default class EmployeeEditCmp extends LightningElement {
         this.validator = this.initValidatorData();
     }
 
+    // Set value default input event Add
     setDefaultValueAdd() {
         return {
             Id: '',
@@ -30,6 +31,7 @@ export default class EmployeeEditCmp extends LightningElement {
         };
     }
 
+    // close popup Add/Edit
     closeModalHandler() {
         this.dispatchEvent(new CustomEvent('closeeditemployee'));
     }
@@ -49,6 +51,7 @@ export default class EmployeeEditCmp extends LightningElement {
         }
     }
 
+    // validate value input when insert/update
     validateInput(employee) {
         let validObject = this.initValidatorData();
 
@@ -72,6 +75,7 @@ export default class EmployeeEditCmp extends LightningElement {
         return !validObject.name.isError && !validObject.email.isError && !validObject.birthday.isError;
     }
 
+    // insert/update employee to database
     saveEmployee() {
         // format lastModifiedDate
         if (this.employee.Id != '') {
@@ -81,7 +85,7 @@ export default class EmployeeEditCmp extends LightningElement {
                 lastModifiedDate = lastModifiedDate.substring(0,pos);
             }
         } 
-        // set value employee import vao model
+        // set value employee import to model
         let inputEmployee = {
             Id: this.employee.Id,
             Name: this.employee.Name,
@@ -91,8 +95,7 @@ export default class EmployeeEditCmp extends LightningElement {
             Memo: this.employee.Memo__c,
             LastModifiedDate: lastModifiedDate
         };
-        
-        // get message error chua nhap input (email, name or birthday)
+
         let inputEmp = Object.assign({}, this.employee);
         let isValid = this.validateInput(inputEmp);
         // validate input
@@ -108,8 +111,7 @@ export default class EmployeeEditCmp extends LightningElement {
                 });
                 inputEmp.LastModifiedDate = msg.lastModifiedDate.LastModifiedDate;
                 
-                // hien thi thay doi cua employee len component Detail khi edit thanh cong
-                
+                // Show changes of employee to Detail when edit pass
                 this.dispatchEvent(event);
                 if(msg.variant == 'success') {
                     if(this.checked) {
@@ -130,7 +132,7 @@ export default class EmployeeEditCmp extends LightningElement {
         }
     }
 
-    // Hien thi border và text mau do khi khong nhap fields bat buoc
+    // Displays border and text quickly when it does not input fields that are required
     get classInputNameWrapper() {
         return this.getInputWrapperClassCss(this.validator.name.isError);
     }
