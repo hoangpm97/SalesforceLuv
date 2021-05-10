@@ -70,9 +70,7 @@ public with sharing class EmployeeController {
                 result.put('lastModifiedDate', lastModifiedDate);
                 
                 return JSON.serialize(result);
-            }
-            // result.put('variant', 'error');
-            
+            }           
             employeeObj.Id = model.Id;
 
         }
