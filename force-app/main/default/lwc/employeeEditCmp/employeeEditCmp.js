@@ -1,5 +1,5 @@
 import { LightningElement, api, track } from 'lwc';
-import insertEmployee from '@salesforce/apex/EmployeeController.insertEmployee';
+import insertEmployee from '@salesforce/apex/EmployeeController.doUpsertEmployee';
 
 import { ShowToastEvent } from 'lightning/platformShowToastEvent';
 export default class EmployeeEditCmp extends LightningElement {

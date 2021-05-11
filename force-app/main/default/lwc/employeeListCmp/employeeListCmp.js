@@ -1,8 +1,8 @@
 import { LightningElement, track, wire, api } from 'lwc';
-import getEmployeeList from '@salesforce/apex/EmployeeController.getEmployeeList';
-import searchEmployees from '@salesforce/apex/EmployeeController.searchEmployees';
-import deleteEmployee from '@salesforce/apex/EmployeeController.deleteEmployee';
-import getDetailEmployeeById from '@salesforce/apex/EmployeeController.getDetailEmployeeById';
+import getEmployeeList from '@salesforce/apex/EmployeeController.doEmployeeList';
+import searchEmployees from '@salesforce/apex/EmployeeController.doSearchEmployee';
+import deleteEmployee from '@salesforce/apex/EmployeeController.doDeleteEmployee';
+import getDetailEmployeeById from '@salesforce/apex/EmployeeController.doDetailEmployeeById';
 
 import { ShowToastEvent } from 'lightning/platformShowToastEvent';
 export default class EmployeeListCmp extends LightningElement {

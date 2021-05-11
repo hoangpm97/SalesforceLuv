@@ -1,34 +1,13 @@
-public with sharing class EmployeeController {
-    private static final Integer LIMIT_RECORD_2001 = 2001;
-
-    @AuraEnabled
-    public static List<Employee__c> queryEmployees(String nameSearch, String phoneSearch){
-        String strSQL = 'SELECT Id, Name, Phone__c, BirthDay__c, Email__c, Memo__c, LastModifiedDate ';
-        strSQL += ' FROM Employee__c ';
-        strSQL += ' WHERE Id != null ';
-        
-        
-        if(String.isNotBlank(nameSearch)) {
-            String searchLikeName = '%' + nameSearch + '%';
-            strSQL += ' AND Name LIKE :searchLikeName ';
-        }
-        if(String.isNotBlank(phoneSearch)) {
-            String searchLikePhone = '%' + phoneSearch + '%';
-            strSQL += 'AND Phone__C LIKE :searchLikePhone ';
-        }
-
-        strSQL += ' ORDER BY Name ASC';
-
-        return Database.query(strSQL);
-    }
-
-    @AuraEnabled
-    public static String searchEmployees(String nameSearch, String phoneSearch) {
+public with sharing class EmployeeLogic {
+    private static EmployeeRepo employeeRepo = new EmployeeRepo();
+    
+    private final Integer LIMIT_RECORD_2001 = 2001;
+    public String searchEmployee(String nameSearch, String phoneSearch) {
         Map<String, Object> result = new Map<String, Object>();
         Boolean isSearchingOverLimit = false;
 
         // max 2000 employees can return
-        List<Employee__c> employees = queryEmployees(nameSearch, phoneSearch);
+        List<Employee__c> employees = employeeRepo.queryEmployees(nameSearch, phoneSearch);
         if(LIMIT_RECORD_2001 == employees.size()) {
             isSearchingOverLimit = true;
             employees.remove(LIMIT_RECORD_2001 - 1);
@@ -40,12 +19,10 @@ public with sharing class EmployeeController {
         return JSON.serialize(result);
     }
 
-    @AuraEnabled(cacheable=true)
-    public static String getEmployeeList(){
+    public String getEmployeeList() {
         Map<String, Object> result = new Map<String, Object>();
         Boolean isSearchingOverLimit = false;
-        String strSQL = 'SELECT Id, Name, Phone__c, BirthDay__c, Email__c, Memo__c, LastModifiedDate FROM Employee__c ORDER BY Name ASC';
-        List<Employee__c> employees = Database.query(strSQL);
+        List<Employee__c> employees = employeeRepo.getEmployeeList();
         if(LIMIT_RECORD_2001 == employees.size()) {
             isSearchingOverLimit = true;
             employees.remove(LIMIT_RECORD_2001 - 1);
@@ -56,27 +33,21 @@ public with sharing class EmployeeController {
         return JSON.serialize(result);
     }
 
-    @AuraEnabled
-    public static Employee__c getDetailEmployeeById(String employeeId){
-        return [
-            SELECT Id, Name, Email__c, Phone__c, BirthDay__c, Memo__c, LastModifiedDate
-            FROM Employee__c 
-            WHERE Id = :employeeId
-        ];
+    public Employee__c getDetailEmployeeById(String employeeId) {
+            return employeeRepo.getDetailEmployeeById(employeeId);
     }
 
-    @AuraEnabled
-    public static String insertEmployee(EmployeeModel model){
-        // khoi tao map luu thong bao
+    public String upsertEmployee(EmployeeDto model){
+        // Create map save message
         Map<String, Object> result = new Map<String, Object>();
-        //khoi tao va khai báo doi tuong employee
+        // Create and report employee obj
         Employee__c employeeObj = new Employee__c();
 
         if(model.Id != ''){
-            // kiem tra ton tai cua employee
-            List<Employee__C> getEmployeeById = [SELECT Id, LastModifiedDate FROM Employee__C WHERE Id = :model.Id];
+            // Check employee's records
+            List<Employee__c> getEmployeeById = employeeRepo.checkEmployeeExists(model.Id);
             if(getEmployeeById.size() == 0) {
-                // thong bao khi update 1 employee khong ton tai
+                // Notice when update a employee is not exist
                 result.put('title', 'Error!');
                 result.put('message', 'Employee is not exist!');
                 result.put('variant', 'error');
@@ -105,32 +76,20 @@ public with sharing class EmployeeController {
         upsert employeeObj;
 
 
-        // thong bao khi insert hoac update thanh cong
+        // Notice when insert or update passed
         result.put('title', 'Success!');
         result.put('message', 'Employee is saved successfully!');
         result.put('variant', 'success');
         result.put('empid', employeeObj.Id);
-        result.put('lastModifiedDate', getDetailEmployeeById(employeeObj.Id));
+        result.put('lastModifiedDate', employeeRepo.getLastModifiedDate(employeeObj.Id));
         return JSON.serialize(result);
     }
 
-    @AuraEnabled
-    public static Employee__c getLastModifiedDate(String employeeId){
-        return [
-            SELECT LastModifiedDate
-            FROM Employee__c 
-            WHERE Id = :employeeId
-        ];
-    }
-
-    @AuraEnabled
-    public static String deleteEmployee(String employeeId) {
-
+    public String deleteEmployee(String employeeId) {
         Map<String, Object> result = new Map<String, Object>();
-
-        List<Employee__C> employeeObj = [SELECT Id FROM Employee__C WHERE Id = :employeeId];
+        List<Employee__c> employeeObj = employeeRepo.checkEmployeeExists(employeeId);
         if(employeeObj.size() == 0) {
-            // thong bao khi update 1 employee khong ton tai
+            // Notice when update a employee is not exist
                 result.put('title', 'Error!');
                 result.put('message', 'Employee is not exist!');
                 result.put('variant', 'error');

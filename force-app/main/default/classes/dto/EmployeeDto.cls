@@ -1,5 +1,4 @@
-public with sharing class EmployeeModel {
-
+public with sharing class EmployeeDto {
     @AuraEnabled
     public String Id { get; set; }
     @AuraEnabled
