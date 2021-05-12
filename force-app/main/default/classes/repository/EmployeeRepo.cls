@@ -1,7 +1,7 @@
 public with sharing class EmployeeRepo {
 
     public List<Employee__c> queryEmployees(String nameSearch, String phoneSearch){
-        String strSQL = 'SELECT Id, Name, Phone__c, BirthDay__c, Email__c, Memo__c, LastModifiedDate ';
+        String strSQL = 'SELECT Id, Name, Phone__c, BirthDay__c, Email__c, Memo__c, LastModifiedDate, SrcAvatar__c ';
         strSQL += ' FROM Employee__c ';
         strSQL += ' WHERE Id != null ';
         
@@ -21,14 +21,14 @@ public with sharing class EmployeeRepo {
     }
 
     public List<Employee__c> getEmployeeList() {
-        String strSQL = 'SELECT Id, Name, Phone__c, BirthDay__c, Email__c, Memo__c, LastModifiedDate FROM Employee__c ORDER BY Name ASC';
+        String strSQL = 'SELECT Id, Name, Phone__c, BirthDay__c, Email__c, Memo__c, LastModifiedDate, SrcAvatar__c FROM Employee__c ORDER BY Name ASC';
         return Database.query(strSQL);
 
     }
 
     public Employee__c getDetailEmployeeById(String employeeId) {
         return [
-            SELECT Id, Name, Email__c, Phone__c, BirthDay__c, Memo__c, LastModifiedDate
+            SELECT Id, Name, Email__c, Phone__c, BirthDay__c, Memo__c, LastModifiedDate, SrcAvatar__c
             FROM Employee__c 
             WHERE Id = :employeeId
         ];

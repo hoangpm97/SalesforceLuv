@@ -13,4 +13,6 @@ public with sharing class EmployeeDto {
     public String Phone { get; set; }
     @AuraEnabled
     public String LastModifiedDate { get; set; }
+    @AuraEnabled
+    public String SrcAvatar { get; set; }
 }

@@ -28,6 +28,7 @@ export default class EmployeeEditCmp extends LightningElement {
             Phone__c: '',
             BirthDay__c: '',
             Memo__c: '',
+            SrcAvatar__c: ''
         };
     }
 
@@ -39,15 +40,49 @@ export default class EmployeeEditCmp extends LightningElement {
     changeFieldInputHandler(event) {
         let empObj = {};
         Object.assign(empObj, this.employee);
-        empObj[event.currentTarget.dataset.fieldName] = event.target.value;
-        this.employee = empObj;
+        if (event.currentTarget.dataset.fieldName !== undefined) {
+            empObj[event.currentTarget.dataset.fieldName] = event.target.value;
+        }
+        
+        // handle input avatar
+        this.previewFile(empObj);
+        setTimeout(() => {
+            this.employee = empObj;
+            console.log('emp: ', JSON.stringify(this.employee));
+        }, 500);
+    }
+
+    previewFile(empObject) {
+        const preview = this.template.querySelector('img');
+        const file = this.template.querySelector('input[type=file]').files[0];
+        var size = parseFloat(file.size / (1024 * 1024)).toFixed(2);
+        const reader = new FileReader();
+        if (size > 1) {
+            let SIZE_OF_FILE_VALID = {
+                isError: true,
+                errMsg: "Please select image size less than 1 MB"
+            }
+            this.validator.avatar = SIZE_OF_FILE_VALID;
+        } else {
+            this.validator.avatar.isError = false;
+            reader.addEventListener("load", function () {
+                // convert image file to base64 string
+                preview.src = reader.result;
+                empObject.SrcAvatar__c = reader.result;
+              }, false);
+        }
+        
+        if (file) {
+            reader.readAsDataURL(file);
+        }
     }
 
     initValidatorData() {
         return {
             name: {isError: false, errMsg: ""},
             email: {isError: false, errMsg: ""},
-            birthday: {isError: false, errMsg: ""}
+            birthday: {isError: false, errMsg: ""},
+            avatar: {isError: false, errMsg: ""}
         }
     }
 
@@ -93,7 +128,8 @@ export default class EmployeeEditCmp extends LightningElement {
             Phone: this.employee.Phone__c,
             BirthDay: this.employee.BirthDay__c,
             Memo: this.employee.Memo__c,
-            LastModifiedDate: lastModifiedDate
+            LastModifiedDate: lastModifiedDate,
+            SrcAvatar: this.employee.SrcAvatar__c
         };
 
         let inputEmp = Object.assign({}, this.employee);
@@ -141,6 +177,9 @@ export default class EmployeeEditCmp extends LightningElement {
     }
     get classInputBirthDayWrapper() {
         return this.getInputWrapperClassCss(this.validator.birthday.isError);
+    }
+    get classInputAvatarWrapper() {
+        return this.getInputWrapperClassCss(this.validator.avatar.isError);
     }
 
     getInputWrapperClassCss(isError) {

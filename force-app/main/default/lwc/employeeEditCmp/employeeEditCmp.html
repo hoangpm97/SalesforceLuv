@@ -11,6 +11,15 @@
             <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">
                 <div class="slds-form slds-form_compound">
                     <div class="slds-form-element__row">
+                        <div class={classInputAvatarWrapper}>
+                            <label class="slds-form-element__label">Avatar</label>
+                            <input type="file" onchange={changeFieldInputHandler}><br>
+                            <img class="size-avatar" src={employee.SrcAvatar__c} height="50" width="50" alt="Image preview...">
+                            <div class="slds-form-element__help" if:true={validator.avatar.isError}>
+                                {validator.avatar.errMsg}</div>
+                        </div>
+                    </div>
+                    <div class="slds-form-element__row">
                         <div class={classInputNameWrapper}>
                             <label class="slds-form-element__label">Name<abbr class="slds-required"
                                     title="required">*</abbr></label>

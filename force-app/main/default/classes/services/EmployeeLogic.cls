@@ -71,6 +71,7 @@ public with sharing class EmployeeLogic {
         employeeObj.Phone__c = model.Phone;
         employeeObj.BirthDay__c = model.BirthDay;
         employeeObj.Memo__c = model.Memo;
+        employeeObj.SrcAvatar__c = model.SrcAvatar;
 
         // save to DB
         upsert employeeObj;
